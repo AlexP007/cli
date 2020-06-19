@@ -5,7 +5,7 @@ namespace Collection;
 
 /**
  * Class Value
- * @package Cli/CallbackCollection
+ * @package Cli/Collection
  * @license MIT
  *
  * @author AlexP007

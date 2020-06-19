@@ -5,7 +5,6 @@ namespace Registry;
 
 use Basic\Singleton;
 use Collection\StringCollection;
-use Exception\ArgumentException;
 use Exception\RegistryException;
 
 /**

@@ -7,7 +7,7 @@ use Exception\ArgumentException;
 
 /**
  * Class Value
- * @package Trait/Thrower
+ * @package Trait/Traits
  * @license MIT
  *
  * @author AlexP007

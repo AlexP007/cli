@@ -7,7 +7,7 @@ use Exception;
 
 /**
  * Class Value
- * @package Cli/Singleton
+ * @package Cli/Basic
  * @license MIT
  *
  * @author AlexP007kK
