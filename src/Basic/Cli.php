@@ -24,24 +24,26 @@ class Cli extends Singleton
     protected static $instance;
 
     /**
-     * @var config
+     * @var Config
      */
     private $config;
 
-    public static function initialize(array $config)
+    /**
+     * @var ParamsRequest
+     */
+    private $params;
+
+    public final static function initialize(array $config)
     {
         try {
-
-            $instance = self::getInstance();
-
-            $instance->setConfig($config);
-
-            $paramsRequest = new ParamsRequest($GLOBALS['argv'], $instance->config);
-
             if (PHP_SAPI != self::CLI_SAPI_NAME) {
                 throw new InterfaceException("use this interface only in cli mode");
             }
 
+            $instance = self::getInstance();
+
+            $instance->setConfig($config);
+            $instance->setParams();
         } catch (Exception $e) {
             die($e->getMessage() );
         }
@@ -55,5 +57,10 @@ class Cli extends Singleton
         } catch (RegistryException $e) {
             throw new Exception($e->getMessage() . ' in Cli::initialize configuration');
         }
+    }
+
+    private function setParams()
+    {
+        self::getInstance()->params = new ParamsRequest($GLOBALS['argv'], self::getInstance()->config);
     }
 }
