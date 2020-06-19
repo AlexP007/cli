@@ -52,7 +52,7 @@ class Cli extends Singleton
             $instance->setParams();
             $instance->setHandlerCollection();
         } catch (Exception $e) {
-            die($e->getMessage() );
+            die($instance->redOut($e->getMessage() ) );
         }
     }
 
@@ -64,7 +64,7 @@ class Cli extends Singleton
             $instance->checkCommand();
             $instance->runCommand();
         } catch (Exception $e) {
-            die($e->getMessage() );
+            die($instance->redOut($e->getMessage() ) );
         }
     }
 
@@ -73,7 +73,9 @@ class Cli extends Singleton
         try {
             self::getInstance()->handlers->$command = $callback;
         } catch (ArgumentException $e) {
-            die($e->getMessage() . "in Cli::handle command $command");
+            die(self::getInstance()->redOut(
+                $e->getMessage() . "in Cli::handle command $command")
+            );
         }
     }
 
@@ -115,5 +117,10 @@ class Cli extends Singleton
         $commandName = $this->params->getCommand();
         $command = $this->handlers->$commandName;
         $command();
+    }
+
+    private function redOut(string $string): string
+    {
+        return "\033[31m$string\033[0m";
     }
 }
