@@ -14,6 +14,6 @@ use Exception;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class ArgumentException extends Exception
+class CommandException extends Exception
 {
 }

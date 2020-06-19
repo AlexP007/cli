@@ -18,6 +18,12 @@ use Registry\Config;
 class ParamsRequest extends Request
 {
     /**
+     * @var string
+     */
+
+    private $command;
+
+    /**
      * @var array
      */
     private $params = [];
@@ -39,6 +45,9 @@ class ParamsRequest extends Request
         $firstArg = array_shift($args);
         $this->checkFirstArgsKeyValue($firstArg);
 
+        $commandName = array_shift($args);
+        $this->setCommandName($commandName);
+
         $this->collectFlags($args);
         $this->cleanArgsFromFlags($args);
         $this->setParams($args);
@@ -54,9 +63,19 @@ class ParamsRequest extends Request
         return $this->params;
     }
 
-    public function getFlags()
+    public function getFlags(): array
     {
         return $this->flags;
+    }
+
+    public function getCommand(): string
+    {
+        return $this->command;
+    }
+
+    private function setCommandName(string $commandName)
+    {
+       $this->command = $commandName;
     }
 
     private function checkFirstArgsKeyValue(string $value)

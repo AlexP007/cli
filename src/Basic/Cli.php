@@ -3,8 +3,9 @@
 
 namespace Basic;
 
+use Collection\CallbackCollection;
 use Exception;
-use Exception\{InterfaceException, RegistryException};
+use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Registry\Config;
 use Request\ParamsRequest;
 
@@ -33,6 +34,11 @@ class Cli extends Singleton
      */
     private $params;
 
+    /**
+     * @var CallbackCollection
+     */
+    private $handlers;
+
     public final static function initialize(array $config)
     {
         try {
@@ -44,16 +50,38 @@ class Cli extends Singleton
 
             $instance->setConfig($config);
             $instance->setParams();
+            $instance->setHandlerCollection();
         } catch (Exception $e) {
             die($e->getMessage() );
         }
     }
 
+    public final static function run()
+    {
+        try {
+            $instance = self::getInstance();
+
+            $instance->checkCommand();
+            $instance->runCommand();
+        } catch (Exception $e) {
+            die($e->getMessage() );
+        }
+    }
+
+    public final static function handle(string $command, callable $callback)
+    {
+        try {
+            self::getInstance()->handlers->$command = $callback;
+        } catch (ArgumentException $e) {
+            die($e->getMessage() . "in Cli::handle command $command");
+        }
+    }
+
     private function setConfig(array $config)
     {
-        self::getInstance()->config = Config::getInstance();
+        $this->config = Config::getInstance();
         try {
-            self::getInstance()->config->load($config);
+            $this->config->load($config);
         } catch (RegistryException $e) {
             throw new Exception($e->getMessage() . ' in Cli::initialize configuration');
         }
@@ -61,6 +89,31 @@ class Cli extends Singleton
 
     private function setParams()
     {
-        self::getInstance()->params = new ParamsRequest($GLOBALS['argv'], self::getInstance()->config);
+        $this->params = new ParamsRequest($GLOBALS['argv'], self::getInstance()->config);
+    }
+
+    private function setHandlerCollection()
+    {
+        $this->handlers = new CallbackCollection();
+    }
+
+    private function checkCommand()
+    {
+        $commands = [];
+
+        foreach ($this->handlers->getIterator() as $commandName => $callable) {
+            $commands[$commandName] = $callable;
+        }
+
+        if (!in_array($this->params->getCommand(), array_keys($commands) ) ) {
+            throw new CommandException("not allowed command {$this->params->getCommand()}");
+        }
+    }
+
+    private function runCommand()
+    {
+        $commandName = $this->params->getCommand();
+        $command = $this->handlers->$commandName;
+        $command();
     }
 }

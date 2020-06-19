@@ -16,5 +16,4 @@ use Exception;
  */
 class RegistryException extends Exception
 {
-
 }
