@@ -8,6 +8,7 @@ use Exception;
 use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Registry\Config;
 use Request\ParamsRequest;
+use Strategy\CommandExecuteStrategy;
 
 /**
  * Class Value
@@ -50,7 +51,7 @@ class Cli extends Singleton
 
             $instance->setConfig($config);
             $instance->setParams();
-            $instance->setHandlerCollection();
+            $instance->initHandlerCollection();
         } catch (Exception $e) {
             die($instance->redOut($e->getMessage() ) );
         }
@@ -62,7 +63,12 @@ class Cli extends Singleton
             $instance = self::getInstance();
 
             $instance->checkCommand();
-            $instance->runCommand();
+            $commandExecutor = new CommandExecuteStrategy(
+                $instance->handlers,
+                $instance->params
+            );
+
+            return $commandExecutor->run();
         } catch (Exception $e) {
             die($instance->redOut($e->getMessage() ) );
         }
@@ -94,7 +100,7 @@ class Cli extends Singleton
         $this->params = new ParamsRequest($GLOBALS['argv'], self::getInstance()->config);
     }
 
-    private function setHandlerCollection()
+    private function initHandlerCollection()
     {
         $this->handlers = new CallbackCollection();
     }
@@ -110,13 +116,6 @@ class Cli extends Singleton
         if (!in_array($this->params->getCommand(), array_keys($commands) ) ) {
             throw new CommandException("not allowed command {$this->params->getCommand()}");
         }
-    }
-
-    private function runCommand()
-    {
-        $commandName = $this->params->getCommand();
-        $command = $this->handlers->$commandName;
-        $command();
     }
 
     private function redOut(string $string): string
