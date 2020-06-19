@@ -5,7 +5,8 @@ namespace Registry;
 
 use Basic\Singleton;
 use Collection\StringCollection;
-use Traits\Thrower;
+use Exception\ArgumentException;
+use Exception\RegistryException;
 
 /**
  * Class Value
@@ -18,8 +19,6 @@ use Traits\Thrower;
  */
 abstract class Registry extends Singleton
 {
-    use Thrower;
-
     /**
      * @var StringCollection;
      */
@@ -53,10 +52,10 @@ abstract class Registry extends Singleton
 
     final function setValue(string $key, $value)
     {
-        self::ensureArgument(!in_array($key, $this->usedKeys), "$key was already set");
+        self::ensure(!in_array($key, $this->usedKeys), "\"$key\" was already set");
         $this->usedKeys[] = $key;
 
-        self::ensureArgument(in_array($key, $this->allowedKeys), "$key is not allowed");
+        self::ensure(in_array($key, $this->allowedKeys), "\"$key\" key is not allowed");
         $this->registry->$key = $value;
     }
 
@@ -79,6 +78,13 @@ abstract class Registry extends Singleton
     {
         foreach ($array as $key => $value) {
             $this->$key = $value;
+        }
+    }
+
+    protected static function ensure(bool $expr, string $message)
+    {
+        if (!$expr) {
+            throw new RegistryException($message);
         }
     }
 }

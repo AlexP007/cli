@@ -4,8 +4,9 @@
 namespace Basic;
 
 use Exception;
-use Exception\InterfaceException;
+use Exception\{InterfaceException, RegistryException};
 use Registry\Config;
+use Request\ParamsRequest;
 
 /**
  * Class Value
@@ -32,15 +33,27 @@ class Cli extends Singleton
         try {
 
             $instance = self::getInstance();
-            $instance->config = Config::getInstance();
+
+            $instance->setConfig($config);
+
+            $paramsRequest = new ParamsRequest($GLOBALS['argv'], $instance->config);
 
             if (PHP_SAPI != self::CLI_SAPI_NAME) {
-                $ex = new InterfaceException("use this interface only in cli mode");
-                throw new $ex;
+                throw new InterfaceException("use this interface only in cli mode");
             }
 
         } catch (Exception $e) {
-            die($e->getMessage());
+            die($e->getMessage() );
+        }
+    }
+
+    private function setConfig(array $config)
+    {
+        self::getInstance()->config = Config::getInstance();
+        try {
+            self::getInstance()->config->load($config);
+        } catch (RegistryException $e) {
+            throw new Exception($e->getMessage() . ' in Cli::initialize configuration');
         }
     }
 }

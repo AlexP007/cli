@@ -22,4 +22,9 @@ class Config extends Registry
             'script_file_name'
         ];
     }
+
+    public function getScriptName()
+    {
+        return $this->script_file_name;
+    }
 }

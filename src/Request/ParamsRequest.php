@@ -4,6 +4,7 @@
 namespace Request;
 
 use Exception\ArgumentException;
+use Registry\Config;
 
 /**
  * Class Value
@@ -16,12 +17,20 @@ use Exception\ArgumentException;
  */
 class ParamsRequest extends Request
 {
-    const SCRIPT_NAME = 'cli.php';
-
+    /**
+     * @var array
+     */
     private $params = [];
 
-    public final function __construct(array $args)
+    /**
+     * @var Config
+     */
+    private $config;
+
+    public final function __construct(array $args, Config $config)
     {
+        $this->config = $config;
+
         $firstArg = array_shift($args);
         $this->checkFirstArgsKeyValue($firstArg);
 
@@ -40,9 +49,8 @@ class ParamsRequest extends Request
 
     private function checkFirstArgsKeyValue(string $value)
     {
-        if ($value != self::SCRIPT_NAME) {
-            $ex = new ArgumentException("not valid arguments");
-            throw new $ex;
+        if ($value != $this->config->getScriptName() ) {
+            throw new ArgumentException("invalid input arguments");
         }
     }
 }
