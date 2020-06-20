@@ -15,7 +15,7 @@ use Registry\Config;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class ParamsRequest extends Request
+class ParamsRequest
 {
     /**
      * @var string
@@ -121,6 +121,6 @@ class ParamsRequest extends Request
 
     private function isFlag(string $value)
     {
-        return  preg_match('/-{1,2}\w/', $value);
+        return  preg_match('/^-{1,2}\w/', $value);
     }
 }

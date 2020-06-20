@@ -5,7 +5,7 @@ namespace Strategy;
 
 use Domain\Command;
 use ReflectionFunction;
-use Request\ParamsRequest;
+use Request\{ParamsRequest, Flags};
 use Traits\Thrower;
 
 /**
@@ -59,6 +59,7 @@ class CommandExecuteStrategy extends Strategy
         $this->setCommandReflection($this->command->getCallable() );
         $this->setCommandParameters();
         $this->checkIncomingParameters();
+        $this->prepareFlags();
 
         return $this->commandReflection->invokeArgs($this->params->getParams() );
     }
@@ -87,5 +88,10 @@ class CommandExecuteStrategy extends Strategy
             $paramsCount === $paramsWithoutDefaultValues,
             "{$this->commandName} expected $paramsWithoutDefaultValues params got: $paramsCount"
         );
+    }
+
+    private function prepareFlags(): Flags
+    {
+        return new Flags($this->params->getFlags(), $this->command->getFlags() );
     }
 }
