@@ -3,9 +3,8 @@
 
 namespace Strategy;
 
-use Exception\ArgumentException;
+use Domain\Command;
 use ReflectionFunction;
-use Collection\CallbackCollection;
 use Request\ParamsRequest;
 use Traits\Thrower;
 
@@ -24,9 +23,9 @@ class CommandExecuteStrategy extends Strategy
     use Thrower;
 
     /**
-     * @var CallbackCollection
+     * @var Command
      */
-    private $handlers;
+    private $command;
 
     /**
      * @var ParamsRequest
@@ -48,20 +47,16 @@ class CommandExecuteStrategy extends Strategy
      */
     private $commandParameters;
 
-    public function __construct(CallbackCollection $handlers, ParamsRequest $params)
+    public function __construct(Command $command, ParamsRequest $params)
     {
-        $this->handlers = $handlers;
+        $this->command = $command;
         $this->params = $params;
+        $this->commandName = $command->getName();
     }
 
     public function run()
     {
-        $commandName = $this->params->getCommand();
-        $this->commandName = $commandName;
-
-        $command = $this->handlers->$commandName;
-
-        $this->setCommandReflection($command);
+        $this->setCommandReflection($this->command->getCallable() );
         $this->setCommandParameters();
         $this->checkIncomingParameters();
 

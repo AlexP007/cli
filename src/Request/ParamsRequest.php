@@ -68,7 +68,7 @@ class ParamsRequest extends Request
         return $this->flags;
     }
 
-    public function getCommand(): string
+    public function getCommandName(): string
     {
         return $this->command;
     }

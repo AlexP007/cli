@@ -3,7 +3,8 @@
 
 namespace Basic;
 
-use Collection\CallbackCollection;
+use Collection\CommandCollection;
+use Domain\Command;
 use Exception;
 use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Registry\Config;
@@ -36,7 +37,7 @@ class Cli extends Singleton
     private $params;
 
     /**
-     * @var CallbackCollection
+     * @var CommandCollection
      */
     private $handlers;
 
@@ -63,8 +64,9 @@ class Cli extends Singleton
             $instance = self::getInstance();
 
             $instance->checkCommand();
+            $command = $instance->params->getCommandName();
             $commandExecutor = new CommandExecuteStrategy(
-                $instance->handlers,
+                $instance->handlers->$command,
                 $instance->params
             );
 
@@ -74,10 +76,11 @@ class Cli extends Singleton
         }
     }
 
-    public final static function handle(string $command, callable $callback)
+    public final static function handle(string $command, callable $callback, array $flags = [])
     {
         try {
-            self::getInstance()->handlers->$command = $callback;
+            $newCommand = new Command($command, $callback, $flags);
+            self::getInstance()->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
             die(self::getInstance()->redOut(
                 $e->getMessage() . "in Cli::handle command $command")
@@ -102,7 +105,7 @@ class Cli extends Singleton
 
     private function initHandlerCollection()
     {
-        $this->handlers = new CallbackCollection();
+        $this->handlers = new CommandCollection();
     }
 
     private function checkCommand()
@@ -113,8 +116,8 @@ class Cli extends Singleton
             $commands[$commandName] = $callable;
         }
 
-        if (!in_array($this->params->getCommand(), array_keys($commands) ) ) {
-            throw new CommandException("not allowed command {$this->params->getCommand()}");
+        if (!in_array($this->params->getCommandName(), array_keys($commands) ) ) {
+            throw new CommandException("not allowed command {$this->params->getCommandName()}");
         }
     }
 
