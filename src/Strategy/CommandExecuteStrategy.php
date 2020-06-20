@@ -65,7 +65,7 @@ class CommandExecuteStrategy extends Strategy
         $this->setCommandParameters();
         $this->checkIncomingParameters();
 
-        return $this->commandReflection->invoke();
+        return $this->commandReflection->invokeArgs($this->params->getParams() );
     }
 
     private function setCommandReflection(callable $command)
