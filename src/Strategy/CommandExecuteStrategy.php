@@ -33,6 +33,11 @@ class CommandExecuteStrategy extends Strategy
     private $params;
 
     /**
+     * @var Flags
+     */
+    private $flags;
+
+        /**
      * @var string
      */
     private $commandName;
@@ -52,6 +57,7 @@ class CommandExecuteStrategy extends Strategy
         $this->command = $command;
         $this->params = $params;
         $this->commandName = $command->getName();
+        $this->flags = new Flags($this->params->getFlags() );
     }
 
     public function run()
@@ -59,9 +65,15 @@ class CommandExecuteStrategy extends Strategy
         $this->setCommandReflection($this->command->getCallable() );
         $this->setCommandParameters();
         $this->checkIncomingParameters();
-        $this->prepareFlags();
+        $this->checkFlags();
 
-        return $this->commandReflection->invokeArgs($this->params->getParams() );
+        $params = $this->params->getParams();
+
+        if ($this->command->useFlags() ) {
+            $params[] = $this->flags->getFlagsAsArray();
+        }
+
+        return $this->commandReflection->invokeArgs($params);
     }
 
     private function setCommandReflection(callable $command)
@@ -84,14 +96,23 @@ class CommandExecuteStrategy extends Strategy
 
         $paramsCount = count($this->params->getParams() );
 
+        // if with flags, we are not count last argument
+        $this->command->useFlags() and  --$paramsWithoutDefaultValues;
+
         self::ensureArgument(
             $paramsCount === $paramsWithoutDefaultValues,
-            "{$this->commandName} expected $paramsWithoutDefaultValues params got: $paramsCount"
+            "{{$this->commandName}} expected $paramsWithoutDefaultValues params got: $paramsCount"
         );
     }
 
-    private function prepareFlags(): Flags
+    private function checkFlags()
     {
-        return new Flags($this->params->getFlags(), $this->command->getFlags() );
+        $flags = array_keys($this->flags->getFlagsAsArray() );
+        $diff = array_diff($flags, $this->command->getFlags() );
+
+        self::ensureArgument(
+            count($diff) < 1,
+            '[' .join(', ', $diff) . "] are not allowed flags for command {{$this->commandName}}"
+        );
     }
 }

@@ -30,9 +30,9 @@ class Command
     private $flags;
 
     /**
-     * @var array
+     * @var bool
      */
-    private $params;
+    private $useFlags = false;
 
 
     public function __construct(string $name, callable $callable, array $flags)
@@ -40,6 +40,10 @@ class Command
         $this->name = $name;
         $this->callable = $callable;
         $this->flags = $flags;
+
+        if (count($flags) > 0) {
+            $this->useFlags = true;
+        }
     }
 
     public function getName(): string
@@ -55,5 +59,10 @@ class Command
     public function getFlags(): array
     {
         return $this->flags;
+    }
+
+    public function useFlags(): bool
+    {
+        return $this->useFlags;
     }
 }

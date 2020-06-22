@@ -3,8 +3,6 @@
 
 namespace Request;
 
-use Traits\Thrower;
-
 /**
  * Class Value
  * @package Cli/Request
@@ -16,16 +14,14 @@ use Traits\Thrower;
  */
 class Flags
 {
-    use Thrower;
     /**
      * @var array
      */
     private $flags;
 
-    public function __construct(array $requestFlags, array $commandFlags)
+    public function __construct(array $requestFlags)
     {
         $this->setFlags($requestFlags);
-        $this->checkFlags($commandFlags);
     }
 
     private function setFlags(array $requestFlags)
@@ -43,14 +39,8 @@ class Flags
         $this->flags = $result;
     }
 
-    private function checkFlags(array $commandFlags)
+    public function getFlagsAsArray(): array
     {
-        $flags = array_keys($this->flags);
-        $diff = array_diff($flags, $commandFlags);
-
-        self::ensureArgument(
-            count($diff) < 1,
-            join(', ', $diff) . " are not allowed flags for this command"
-        );
+        return $this->flags;
     }
 }
