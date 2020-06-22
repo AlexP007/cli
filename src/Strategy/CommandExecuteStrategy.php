@@ -38,7 +38,7 @@ class CommandExecuteStrategy extends Strategy
      */
     private $flags;
 
-        /**
+    /**
      * @var string
      */
     private $commandName;
