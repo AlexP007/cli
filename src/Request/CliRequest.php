@@ -3,8 +3,9 @@
 
 namespace Request;
 
-use Exception\ArgumentException;
+use Domain\{Params, Flags};
 use Registry\Config;
+use Traits\Thrower;
 
 /**
  * Class Value
@@ -15,18 +16,9 @@ use Registry\Config;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class ParamsRequest
+class CliRequest
 {
-    /**
-     * @var string
-     */
-
-    private $command;
-
-    /**
-     * @var array
-     */
-    private $params = [];
+    use Thrower;
 
     /**
      * @var Config
@@ -34,38 +26,55 @@ class ParamsRequest
     private $config;
 
     /**
-     * @var array
+     * @var string
      */
-    private $flags = [];
+    private $command;
+
+    /**
+     * @var Params
+     */
+    private $params;
+
+    /**
+     * @var $flags;
+     */
+    private $flags;
 
     public final function __construct(array $args, Config $config)
     {
         $this->config = $config;
 
         $firstArg = array_shift($args);
-        $this->checkFirstArgsKeyValue($firstArg);
+        $this->validateFirstArgsKeyValue($firstArg);
 
         $commandName = array_shift($args);
         $this->setCommandName($commandName);
 
-        $this->collectFlags($args);
+        $flags = $this->collectFlags($args);
         $this->cleanArgsFromFlags($args);
+
         $this->setParams($args);
+        $this->setFlags($flags);
+    }
+
+    private function validateFirstArgsKeyValue(string $value)
+    {
+        self::ensureArgument($value === $this->config->getScriptName(), 'invalid input arguments');
+    }
+
+    private function setCommandName(string $commandName)
+    {
+        $this->command = $commandName;
     }
 
     private function setParams(array $args)
     {
-        $this->params = $args;
+        $this->params = new Params($args);
     }
 
-    public function getParams(): array
+    private function setFlags(array $flags)
     {
-        return $this->params;
-    }
-
-    public function getFlags(): array
-    {
-        return $this->flags;
+        $this->flags = new Flags($flags);
     }
 
     public function getCommandName(): string
@@ -73,16 +82,14 @@ class ParamsRequest
         return $this->command;
     }
 
-    private function setCommandName(string $commandName)
+    public function getParams(): Params
     {
-       $this->command = $commandName;
+        return $this->params;
     }
 
-    private function checkFirstArgsKeyValue(string $value)
+    public function getFlags(): Flags
     {
-        if ($value != $this->config->getScriptName() ) {
-            throw new ArgumentException("invalid input arguments");
-        }
+        return $this->flags;
     }
 
     /**
@@ -93,14 +100,16 @@ class ParamsRequest
      * Collects flags with - or -- that are passed before arguments
      * Works before first non-flag value
      */
-    private function collectFlags(array &$args, int $pointer = 0)
+    private function collectFlags(array &$args, int $pointer = 0, array &$flags = []): array
     {
         if ($pointer + 1 < count($args) ) {
             if ($this->isFlag($args[$pointer]) ) {
-                $this->flags[] = $args[$pointer];
-                $this->collectFlags($args, $pointer + 1);
+                $flags[] = $args[$pointer];
+                $this->collectFlags($args, $pointer + 1, $flags);
             }
         }
+
+        return $flags;
     }
 
     /**
@@ -123,4 +132,5 @@ class ParamsRequest
     {
         return  preg_match('/^-{1,2}\w/', $value);
     }
+
 }

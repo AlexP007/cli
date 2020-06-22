@@ -8,7 +8,8 @@ use Domain\Command;
 use Exception;
 use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Registry\Config;
-use Request\ParamsRequest;
+use Domain\Params;
+use Request\CliRequest;
 use Strategy\CommandExecuteStrategy;
 
 /**
@@ -32,9 +33,9 @@ class Cli extends Singleton
     private $config;
 
     /**
-     * @var ParamsRequest
+     * @var CliRequest;
      */
-    private $params;
+    private $request;
 
     /**
      * @var CommandCollection
@@ -51,7 +52,6 @@ class Cli extends Singleton
             $instance = self::getInstance();
 
             $instance->setConfig($config);
-            $instance->setParams();
             $instance->initHandlerCollection();
         } catch (Exception $e) {
             die($instance->redOut($e->getMessage() ) );
@@ -63,11 +63,13 @@ class Cli extends Singleton
         try {
             $instance = self::getInstance();
 
+            $instance->setRequest();
+
             $instance->checkCommand();
-            $command = $instance->params->getCommandName();
+            $command = $instance->request->getCommandName();
             $commandExecutor = new CommandExecuteStrategy(
                 $instance->handlers->$command,
-                $instance->params
+                $instance->request
             );
 
             return $commandExecutor->run();
@@ -98,9 +100,9 @@ class Cli extends Singleton
         }
     }
 
-    private function setParams()
+    private function setRequest()
     {
-        $this->params = new ParamsRequest($GLOBALS['argv'], self::getInstance()->config);
+        $this->request = new CliRequest($GLOBALS['argv'], self::getInstance()->config);
     }
 
     private function initHandlerCollection()
@@ -116,7 +118,7 @@ class Cli extends Singleton
             $commands[$commandName] = $callable;
         }
 
-        if (!in_array($this->params->getCommandName(), array_keys($commands) ) ) {
+        if (!in_array($this->request->getCommandName(), array_keys($commands) ) ) {
             throw new CommandException("not allowed command {$this->params->getCommandName()}");
         }
     }

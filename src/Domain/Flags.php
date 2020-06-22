@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Request;
+namespace Domain;
 
 /**
  * Class Value
- * @package Cli/Request
+ * @package Cli/Domain
  * @license MIT
  *
  * @author AlexP007
@@ -42,5 +42,10 @@ class Flags
     public function getFlagsAsArray(): array
     {
         return $this->flags;
+    }
+
+    public function getFlag(string $key)
+    {
+        return $this->flags[$key];
     }
 }

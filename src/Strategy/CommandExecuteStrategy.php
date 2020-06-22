@@ -5,7 +5,8 @@ namespace Strategy;
 
 use Domain\Command;
 use ReflectionFunction;
-use Request\{ParamsRequest, Flags};
+use Domain\{Params, Flags};
+use Request\CliRequest;
 use Traits\Thrower;
 
 /**
@@ -28,7 +29,7 @@ class CommandExecuteStrategy extends Strategy
     private $command;
 
     /**
-     * @var ParamsRequest
+     * @var Params
      */
     private $params;
 
@@ -52,12 +53,12 @@ class CommandExecuteStrategy extends Strategy
      */
     private $commandParameters;
 
-    public function __construct(Command $command, ParamsRequest $params)
+    public function __construct(Command $command, CliRequest $request)
     {
         $this->command = $command;
-        $this->params = $params;
-        $this->commandName = $command->getName();
-        $this->flags = new Flags($this->params->getFlags() );
+        $this->params = $request->getParams();
+        $this->flags = $request->getFlags();
+        $this->commandName = $request->getCommandName();
     }
 
     public function run()
@@ -70,7 +71,7 @@ class CommandExecuteStrategy extends Strategy
         $params = $this->params->getParams();
 
         if ($this->command->useFlags() ) {
-            $params[] = $this->flags->getFlagsAsArray();
+            $params[] = $this->flags;
         }
 
         return $this->commandReflection->invokeArgs($params);
@@ -91,13 +92,15 @@ class CommandExecuteStrategy extends Strategy
         $paramsWithoutDefaultValues = 0;
 
         foreach ($this->commandParameters as $param) {
+            $class = $param->getClass();
+            // if with flags, we are not count last argument
+            if ($class and $class->getName() === Flags::class) {
+                continue;
+            }
             $param->isDefaultValueAvailable() or ++$paramsWithoutDefaultValues;
         }
 
         $paramsCount = count($this->params->getParams() );
-
-        // if with flags, we are not count last argument
-        $this->command->useFlags() and  --$paramsWithoutDefaultValues;
 
         self::ensureArgument(
             $paramsCount === $paramsWithoutDefaultValues,
