@@ -34,7 +34,7 @@ class Cli extends Singleton
     /**
      * @var CliRequest;
      */
-    private $request;
+    private $cliRequest;
 
     /**
      * @var CommandCollection
@@ -65,11 +65,11 @@ class Cli extends Singleton
             $instance->setRequest();
 
             $instance->validateAllowedCommands();
-            $command = $instance->request->getCommandName();
+            $command = $instance->cliRequest->getCommandName();
 
             $commandExecutor = new CommandExecuteStrategy(
                 $instance->handlers->$command,
-                $instance->request
+                $instance->cliRequest
             );
 
             return $commandExecutor->run();
@@ -102,7 +102,7 @@ class Cli extends Singleton
 
     private function setRequest()
     {
-        $this->request = new CliRequest($GLOBALS['argv'], self::getInstance()->config);
+        $this->cliRequest = new CliRequest($GLOBALS['argv'], self::getInstance()->config);
     }
 
     private function initHandlerCollection()
@@ -118,8 +118,8 @@ class Cli extends Singleton
             $commands[$commandName] = $callable;
         }
 
-        if (!in_array($this->request->getCommandName(), array_keys($commands) ) ) {
-            throw new CommandException("not allowed command {$this->request->getCommandName()}");
+        if (!in_array($this->cliRequest->getCommandName(), array_keys($commands) ) ) {
+            throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");
         }
     }
 

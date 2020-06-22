@@ -3,6 +3,10 @@
 
 namespace Domain;
 
+use ReflectionFunction;
+use Request\CliRequest;
+use Traits\Thrower;
+
 /**
  * Class Value
  * @package Cli/Domain
@@ -14,6 +18,8 @@ namespace Domain;
  */
 class Command
 {
+    use Thrower;
+
     /**
      * @var string
      */
@@ -34,6 +40,16 @@ class Command
      */
     private $useFlags = false;
 
+    /**
+     * @var ReflectionFunction
+     */
+    private $commandReflection;
+
+    /**
+     * @var
+     */
+    private $commandParametersReflection;
+
 
     public function __construct(string $name, callable $callable, array $flags)
     {
@@ -44,6 +60,81 @@ class Command
         if (count($flags) > 0) {
             $this->useFlags = true;
         }
+    }
+
+    public function invoke(CliRequest $cliRequest)
+    {
+        $this->initReflections();
+        $this->validate($cliRequest);
+
+        $params = $this->getParamsForInvocation($cliRequest);
+
+        return $this->commandReflection->invokeArgs($params);
+    }
+
+    private function initReflections()
+    {
+        $this->setCommandReflection();
+        $this->setCommandParametersReflection();
+    }
+
+    private function validate(CliRequest $cliRequest)
+    {
+        $this->validateAllowedFlags($cliRequest);
+        $this->validateIncomingParameters($cliRequest);
+    }
+
+    private function getParamsForInvocation(CliRequest $cliRequest): array
+    {
+        $params = $cliRequest->getParams()->getParamsAsArray();
+
+        if ($this->useFlags() ) {
+            $params[] = $cliRequest->getFlags();
+        }
+
+        return $params;
+    }
+
+    private function setCommandReflection()
+    {
+        $this->commandReflection = new ReflectionFunction($this->callable);
+    }
+
+    private function setCommandParametersReflection()
+    {
+        $this->commandParametersReflection = $this->commandReflection->getParameters();
+    }
+
+    private function validateIncomingParameters(CliRequest $cliRequest)
+    {
+        $paramsWithoutDefaultValues = 0;
+
+        foreach ($this->commandParametersReflection as $param) {
+            $class = $param->getClass();
+            // if with flags, we are not count last argument
+            if ($class and $class->getName() === Flags::class) {
+                continue;
+            }
+            $param->isDefaultValueAvailable() or ++$paramsWithoutDefaultValues;
+        }
+
+        $paramsCount = count($cliRequest->getParams()->getParamsAsArray() );
+
+        self::ensureArgument(
+            $paramsCount === $paramsWithoutDefaultValues,
+            "{{$this->name}} expected $paramsWithoutDefaultValues params got: $paramsCount"
+        );
+    }
+
+    private function validateAllowedFlags(CliRequest $cliRequest)
+    {
+        $flags = array_keys($cliRequest->getFlags()->getFlagsAsArray() );
+        $diff = array_diff($flags, $this->getFlags() );
+
+        self::ensureArgument(
+            count($diff) < 1,
+            '[' .join(', ', $diff) . "] are not allowed flags for command {{$this->name}}"
+        );
     }
 
     public function getName(): string

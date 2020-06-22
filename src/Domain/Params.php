@@ -32,7 +32,7 @@ class Params
         $this->params = $args;
     }
 
-    public function getParams(): array
+    public function getParamsAsArray(): array
     {
         return $this->params;
     }
