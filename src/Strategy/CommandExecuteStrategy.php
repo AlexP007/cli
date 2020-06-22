@@ -65,8 +65,8 @@ class CommandExecuteStrategy extends Strategy
     {
         $this->setCommandReflection($this->command->getCallable() );
         $this->setCommandParameters();
-        $this->checkIncomingParameters();
-        $this->checkFlags();
+        $this->validateIncomingParameters();
+        $this->validateAllowedFlags();
 
         $params = $this->params->getParams();
 
@@ -87,7 +87,7 @@ class CommandExecuteStrategy extends Strategy
         $this->commandParameters = $this->commandReflection->getParameters();
     }
 
-    private function checkIncomingParameters()
+    private function validateIncomingParameters()
     {
         $paramsWithoutDefaultValues = 0;
 
@@ -108,7 +108,7 @@ class CommandExecuteStrategy extends Strategy
         );
     }
 
-    private function checkFlags()
+    private function validateAllowedFlags()
     {
         $flags = array_keys($this->flags->getFlagsAsArray() );
         $diff = array_diff($flags, $this->command->getFlags() );

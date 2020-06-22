@@ -8,7 +8,6 @@ use Domain\Command;
 use Exception;
 use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Registry\Config;
-use Domain\Params;
 use Request\CliRequest;
 use Strategy\CommandExecuteStrategy;
 
@@ -65,8 +64,9 @@ class Cli extends Singleton
 
             $instance->setRequest();
 
-            $instance->checkCommand();
+            $instance->validateAllowedCommands();
             $command = $instance->request->getCommandName();
+
             $commandExecutor = new CommandExecuteStrategy(
                 $instance->handlers->$command,
                 $instance->request
@@ -110,7 +110,7 @@ class Cli extends Singleton
         $this->handlers = new CommandCollection();
     }
 
-    private function checkCommand()
+    private function validateAllowedCommands()
     {
         $commands = [];
 
@@ -119,7 +119,7 @@ class Cli extends Singleton
         }
 
         if (!in_array($this->request->getCommandName(), array_keys($commands) ) ) {
-            throw new CommandException("not allowed command {$this->params->getCommandName()}");
+            throw new CommandException("not allowed command {$this->request->getCommandName()}");
         }
     }
 
