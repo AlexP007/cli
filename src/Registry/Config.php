@@ -23,6 +23,11 @@ class Config extends Registry
         ];
     }
 
+    protected function validateAllowedKeys(): bool
+    {
+        return true;
+    }
+
     public function getScriptName()
     {
         return $this->script_file_name;

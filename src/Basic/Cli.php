@@ -8,7 +8,7 @@ use Exception;
 use Cli\Collection\CommandCollection;
 use Cli\Domain\{Command, CliRequest};
 use Cli\Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
-use Cli\Registry\Config;
+use Cli\Registry\{Config, HandlerRegistry};
 use Cli\Strategy\CommandExecuteStrategy;
 
 /**
@@ -32,14 +32,14 @@ class Cli extends Singleton
     private $config;
 
     /**
+     * @var HandlerRegistry
+     */
+    private $handlers;
+
+    /**
      * @var CliRequest;
      */
     private $cliRequest;
-
-    /**
-     * @var CommandCollection
-     */
-    private $handlers;
 
     public final static function initialize(array $config)
     {
@@ -51,7 +51,7 @@ class Cli extends Singleton
             $instance = self::getInstance();
 
             $instance->setConfig($config);
-            $instance->initHandlerCollection();
+            $instance->setHandleRegistry();
         } catch (Exception $e) {
             die($instance->redOut($e->getMessage() ) );
         }
@@ -100,21 +100,19 @@ class Cli extends Singleton
         }
     }
 
+    private function setHandleRegistry()
+    {
+        $this->handlers = HandlerRegistry::getInstance();
+    }
+
     private function setRequest()
     {
         $this->cliRequest = new CliRequest($GLOBALS['argv'], self::getInstance()->config);
     }
 
-    private function initHandlerCollection()
-    {
-        $this->handlers = new CommandCollection();
-    }
-
     private function validateAllowedCommands()
     {
-        $commands = $this->handlers->asArray();
-
-        if (!in_array($this->cliRequest->getCommandName(), array_keys($commands) ) ) {
+        if (!$this->handlers->isSet($this->cliRequest->getCommandName() ) ) {
             throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");
         }
     }

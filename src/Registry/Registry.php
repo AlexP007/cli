@@ -4,7 +4,7 @@
 namespace Cli\Registry;
 
 use Cli\Basic\Singleton;
-use Cli\Collection\StringCollection;
+use Cli\Collection\{Collection, StringCollection};
 use Cli\Exception\RegistryException;
 
 /**
@@ -19,9 +19,9 @@ use Cli\Exception\RegistryException;
 abstract class Registry extends Singleton
 {
     /**
-     * @var StringCollection;
+     * @var Collection;
      */
-    private $registry;
+    private $collection;
 
     /**
      * @var array;
@@ -37,30 +37,42 @@ abstract class Registry extends Singleton
 
     protected function init()
     {
-        $this->registry = new StringCollection();
-
+        $this->setCollection(new StringCollection() );
         $this->setAllowedKeys();
     }
 
-    abstract protected function getAllowedKeys(): array;
+    protected function setCollection(Collection $collection)
+    {
+        $this->collection = $collection;
+    }
 
     private function setAllowedKeys()
     {
         $this->allowedKeys = $this->getAllowedKeys();
     }
 
-    final function setValue(string $key, $value)
+    protected function getAllowedKeys(): array
+    {
+        return [];
+    }
+
+    protected abstract function validateAllowedKeys(): bool;
+
+    final protected function setValue(string $key, $value)
     {
         self::ensure(!in_array($key, $this->usedKeys), "\"$key\" was already set");
         $this->usedKeys[] = $key;
 
-        self::ensure(in_array($key, $this->allowedKeys), "\"$key\" key is not allowed");
-        $this->registry->$key = $value;
+        if ($this->validateAllowedKeys() ) {
+            self::ensure(in_array($key, $this->allowedKeys), "\"$key\" key is not allowed");
+        }
+
+        $this->collection->$key = $value;
     }
 
-    final function getValue(string $key)
+    final protected function getValue(string $key)
     {
-        return $this->registry->$key;
+        return $this->collection->$key;
     }
 
     public function __set(string $key, $value)
@@ -78,6 +90,14 @@ abstract class Registry extends Singleton
         foreach ($array as $key => $value) {
             $this->$key = $value;
         }
+    }
+
+    public function isSet(string $key): bool
+    {
+        if ($this->$key) {
+            return true;
+        }
+        return false;
     }
 
     protected static function ensure(bool $expr, string $message)
