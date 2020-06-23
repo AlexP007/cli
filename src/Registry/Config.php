@@ -14,8 +14,14 @@ namespace Cli\Registry;
  */
 class Config extends Registry
 {
+    /**
+     * @var Config
+     */
     protected static $instance;
 
+    /**
+     * @return array
+     */
     protected function getAllowedKeys(): array
     {
         return [
@@ -23,12 +29,18 @@ class Config extends Registry
         ];
     }
 
+    /**
+     * @return bool
+     */
     protected function validateAllowedKeys(): bool
     {
         return true;
     }
 
-    public function getScriptName()
+    /**
+     * @return string
+     */
+    public function getScriptName(): string
     {
         return $this->script_file_name;
     }

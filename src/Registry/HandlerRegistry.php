@@ -16,11 +16,23 @@ use Cli\Collection\CommandCollection;
  */
 class HandlerRegistry extends Registry
 {
+
+    /**
+     * @var HandlerRegistry
+     */
+    protected static $instance;
+
+    /**
+     * Initialize this Registry with CommandCollection
+     */
     protected function init()
     {
         $this->setCollection(new CommandCollection() );
     }
 
+    /**
+     * @return bool
+     */
     protected function validateAllowedKeys(): bool
     {
         return false;
