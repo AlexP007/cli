@@ -39,6 +39,12 @@ class Command
      */
     private $useFlags = false;
 
+    /**
+     * Command constructor.
+     * @param string $name
+     * @param callable $callable
+     * @param array $flags
+     */
     public function __construct(string $name, callable $callable, array $flags)
     {
         $this->name = $name;
@@ -50,31 +56,49 @@ class Command
         }
     }
 
+    /**
+     * @param bool $val
+     */
     public function setUseParams(bool $val)
     {
         $this->useParams = $val;
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @return callable
+     */
     public function getCallable(): callable
     {
         return $this->callable;
     }
 
+    /**
+     * @return array
+     */
     public function getFlags(): array
     {
         return $this->flags;
     }
 
+    /**
+     * @return bool
+     */
     public function useFlags(): bool
     {
         return $this->useFlags;
     }
 
+    /**
+     * @return bool
+     */
     public function useParams(): bool
     {
         return $this->useParams;

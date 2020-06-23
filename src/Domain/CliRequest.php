@@ -40,6 +40,11 @@ class CliRequest
      */
     private $flags;
 
+    /**
+     * CliRequest constructor.
+     * @param array $args
+     * @param Config $config
+     */
     public final function __construct(array $args, Config $config)
     {
         $this->config = $config;
@@ -57,37 +62,63 @@ class CliRequest
         $this->setFlags($flags);
     }
 
+    /**
+     * @param string $value
+     * @throws \Cli\Exception\ArgumentException
+     *
+     * Validating first value in args (GLOBALS)
+     * Should be the name of this script (configured when initialize)
+     */
     private function validateFirstArgsKeyValue(string $value)
     {
         self::ensureArgument($value === $this->config->getScriptName(), 'invalid input arguments');
     }
 
+    /**
+     * @param string $commandName
+     */
     private function setCommandName(string $commandName)
     {
         $this->command = $commandName;
     }
 
+    /**
+     * @param array $args
+     */
     private function setParams(array $args)
     {
         $this->params = array_values($args);
     }
 
+    /**
+     * @param array $flags
+     * @throws \Cli\Exception\ArgumentException
+     */
     private function setFlags(array $flags)
     {
         $this->flags = new FlagCollection();
         $this->flags->loadArray($flags);
     }
 
+    /**
+     * @return string
+     */
     public function getCommandName(): string
     {
         return $this->command;
     }
 
+    /**
+     * @return array
+     */
     public function getParams(): array
     {
         return $this->params;
     }
 
+    /**
+     * @return FlagCollection
+     */
     public function getFlags(): FlagCollection
     {
         return $this->flags;
@@ -102,7 +133,6 @@ class CliRequest
      * Recursive method
      * Collects flags with - or -- that are passed before arguments
      * Works before first non-flag value
-     *
      */
     private function collectFlags(array &$args, int $pointer = 0, array &$flags = []): array
     {

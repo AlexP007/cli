@@ -24,11 +24,18 @@ class Flag
      */
     private $value;
 
+    /**
+     * Flag constructor.
+     * @param string $flag
+     */
     public function __construct(string $flag)
     {
         $this->setFlag($flag);
     }
 
+    /**
+     * @param string $flag
+     */
     private function setFlag(string $flag)
     {
         if (strstr($flag, '=')) {
@@ -42,11 +49,17 @@ class Flag
 
     }
 
+    /**
+     * @return string
+     */
     public function getFlag(): string
     {
         return $this->flag;
     }
 
+    /**
+     * @return string
+     */
     public function getValue()
     {
         return $this->value;
