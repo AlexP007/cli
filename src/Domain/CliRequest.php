@@ -5,7 +5,7 @@ namespace Cli\Domain;
 
 use Cli\Collection\FlagCollection;
 use Cli\Registry\Config;
-use Cli\Traits\Thrower;
+use Cli\Traits\ArgumentThrower;
 
 /**
  * Class Value
@@ -18,7 +18,7 @@ use Cli\Traits\Thrower;
  */
 class CliRequest
 {
-    use Thrower;
+    use ArgumentThrower;
 
     /**
      * @var Config
