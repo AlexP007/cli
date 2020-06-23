@@ -16,6 +16,11 @@ use Cli\Exception\ArgumentException;
  */
 trait ArgumentThrower
 {
+    /**
+     * @param bool $expr
+     * @param string $message
+     * @throws ArgumentException
+     */
     protected static function ensureArgument(bool $expr, string $message)
     {
         if (!$expr) {

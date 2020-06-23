@@ -14,5 +14,10 @@ namespace Cli\Strategy;
  */
 abstract class Strategy
 {
+    /**
+     * @return mixed
+     *
+     * Interface method of strategy
+     */
     abstract public function run();
 }
