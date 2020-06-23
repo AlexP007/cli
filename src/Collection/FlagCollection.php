@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Collection;
+namespace Cli\Collection;
 
-use Basic\Flags;
-use Domain\Flag;
+use Cli\Basic\Flags;
+use Cli\Domain\Flag;
 
 /**
  * Class Value

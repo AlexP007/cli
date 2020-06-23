@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Traits;
+namespace Cli\Traits;
 
-use Exception\ArgumentException;
+use Cli\Exception\ArgumentException;
 
 /**
  * Class Value

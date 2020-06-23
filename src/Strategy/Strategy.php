@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Strategy;
+namespace Cli\Strategy;
 
 /**
  * Class Value

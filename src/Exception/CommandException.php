@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Exception;
+namespace Cli\Exception;
 
 use Exception;
 

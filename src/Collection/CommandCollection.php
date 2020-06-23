@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Collection;
+namespace Cli\Collection;
 
-use Domain\Command;
+use Cli\Domain\Command;
 
 /**
  * Class Value

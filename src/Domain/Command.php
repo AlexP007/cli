@@ -1,11 +1,12 @@
 <?php
 
 
-namespace Domain;
+namespace Cli\Domain;
 
-use Basic\Flags;
 use ReflectionFunction;
-use Traits\Thrower;
+
+use Cli\Basic\Flags;
+use Cli\Traits\Thrower;
 
 /**
  * Class Value

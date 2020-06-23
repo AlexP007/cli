@@ -1,12 +1,11 @@
 <?php
 
 
-namespace Domain;
+namespace Cli\Domain;
 
-use Collection\FlagCollection;
-use Domain\Flag;
-use Registry\Config;
-use Traits\Thrower;
+use Cli\Collection\FlagCollection;
+use Cli\Registry\Config;
+use Cli\Traits\Thrower;
 
 /**
  * Class Value

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Registry;
+namespace Cli\Registry;
 
-use Basic\Singleton;
-use Collection\StringCollection;
-use Exception\RegistryException;
+use Cli\Basic\Singleton;
+use Cli\Collection\StringCollection;
+use Cli\Exception\RegistryException;
 
 /**
  * Class Value

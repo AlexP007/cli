@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Registry;
+namespace Cli\Registry;
 
 /**
  * Class Value

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Collection;
+namespace Cli\Collection;
 
-use Traits\Thrower;
+use Cli\Traits\Thrower;
 
 /**
  * Class Value

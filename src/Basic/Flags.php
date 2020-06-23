@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Basic;
+namespace Cli\Basic;
 
 /**
  * Class Value

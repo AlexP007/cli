@@ -1,14 +1,15 @@
 <?php
 
 
-namespace Basic;
+namespace Cli\Basic;
 
-use Collection\CommandCollection;
-use Domain\{Command, CliRequest};
 use Exception;
-use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
-use Registry\Config;
-use Strategy\CommandExecuteStrategy;
+
+use Cli\Collection\CommandCollection;
+use Cli\Domain\{Command, CliRequest};
+use Cli\Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
+use Cli\Registry\Config;
+use Cli\Strategy\CommandExecuteStrategy;
 
 /**
  * Class Value

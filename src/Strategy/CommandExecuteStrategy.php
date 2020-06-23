@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Strategy;
+namespace Cli\Strategy;
 
-use Domain\{Command, CliRequest};
+use Cli\Domain\{Command, CliRequest};
 
 /**
  * Class Value

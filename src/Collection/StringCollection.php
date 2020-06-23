@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Collection;
+namespace Cli\Collection;
 
 /**
  * Class Value

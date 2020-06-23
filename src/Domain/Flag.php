@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Domain;
+namespace Cli\Domain;
 
 /**
  * Class Value
