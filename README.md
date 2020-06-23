@@ -17,6 +17,6 @@
     
 then you could run command via terminal like:
 
-    php [cli.php] sayHi Peter
+    php cli.php sayHi Peter
     
     
