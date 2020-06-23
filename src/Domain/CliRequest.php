@@ -69,7 +69,7 @@ class CliRequest
 
     private function setParams(array $args)
     {
-        $this->params = $args;
+        $this->params = array_values($args);
     }
 
     private function setFlags(array $flags)
