@@ -3,7 +3,8 @@
 
 namespace Request;
 
-use Domain\{Params, Flags};
+use Collection\FlagCollection;
+use Domain\{Flag, Params};
 use Registry\Config;
 use Traits\Thrower;
 
@@ -36,7 +37,7 @@ class CliRequest
     private $params;
 
     /**
-     * @var $flags;
+     * @var FlagCollection;
      */
     private $flags;
 
@@ -74,7 +75,8 @@ class CliRequest
 
     private function setFlags(array $flags)
     {
-        $this->flags = new Flags($flags);
+        $this->flags = new FlagCollection();
+        $this->flags->loadArray($flags);
     }
 
     public function getCommandName(): string
@@ -87,7 +89,7 @@ class CliRequest
         return $this->params;
     }
 
-    public function getFlags(): Flags
+    public function getFlags(): FlagCollection
     {
         return $this->flags;
     }
@@ -103,7 +105,7 @@ class CliRequest
     private function collectFlags(array &$args, int $pointer = 0, array &$flags = []): array
     {
         if ($pointer + 1 < count($args) ) {
-            if ($this->isFlag($args[$pointer]) ) {
+            if (Flag::isFlag($args[$pointer]) ) {
                 $flags[] = $args[$pointer];
                 $this->collectFlags($args, $pointer + 1, $flags);
             }
@@ -120,17 +122,11 @@ class CliRequest
     private function cleanArgsFromFlags(array &$args)
     {
         foreach ($args as $key => $arg) {
-            if ($this->isFlag($arg) ) {
+            if (Flag::isFlag($arg) ) {
                 unset($args[$key]);
             } else {
                 break;
             }
         }
     }
-
-    private function isFlag(string $value)
-    {
-        return  preg_match('/^-{1,2}\w/', $value);
-    }
-
 }

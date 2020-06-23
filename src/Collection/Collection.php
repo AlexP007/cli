@@ -37,16 +37,26 @@ abstract class Collection
         return $this->collection[$name];
     }
 
-    public function setArrayToCollection(array $values)
+    public function loadArray(array $values)
     {
-        foreach ($values as $key => $value)
-        {
+        foreach ($values as $key => $value) {
             self::ensureArgument(is_string($key), 'collection keys can only be strings');
             $this->$key = $value;
         }
     }
 
-    public function getIterator(): iterable
+    public function asArray(): array
+    {
+        $result = [];
+
+        foreach ($this->getIterator() as $key => $value)     {
+            $result[$key] = $value;
+        }
+
+        return $result;
+    }
+
+    protected function getIterator(): iterable
     {
         for ($i = 0; $i < $this->length; $i++){
             $key = $this->keys[$i];

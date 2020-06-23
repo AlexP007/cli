@@ -112,11 +112,7 @@ class Cli extends Singleton
 
     private function validateAllowedCommands()
     {
-        $commands = [];
-
-        foreach ($this->handlers->getIterator() as $commandName => $callable) {
-            $commands[$commandName] = $callable;
-        }
+        $commands = $this->handlers->asArray();
 
         if (!in_array($this->cliRequest->getCommandName(), array_keys($commands) ) ) {
             throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");

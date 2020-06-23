@@ -14,7 +14,7 @@ use Domain\Command;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class CommandCollection extends Collection
+class ParameterCollection extends Collection
 {
     public function __set(string $name, $command)
     {

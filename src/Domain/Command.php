@@ -3,6 +3,7 @@
 
 namespace Domain;
 
+use Basic\Flags;
 use ReflectionFunction;
 use Request\CliRequest;
 use Traits\Thrower;
@@ -89,7 +90,7 @@ class Command
         $params = $cliRequest->getParams()->getParamsAsArray();
 
         if ($this->useFlags() ) {
-            $params[] = $cliRequest->getFlags();
+            $params[] = $cliRequest->getFlags()->getFlagsObject();
         }
 
         return $params;
@@ -128,7 +129,7 @@ class Command
 
     private function validateAllowedFlags(CliRequest $cliRequest)
     {
-        $flags = array_keys($cliRequest->getFlags()->getFlagsAsArray() );
+        $flags = array_keys($cliRequest->getFlags()->asArray() );
         $diff = array_diff($flags, $this->getFlags() );
 
         self::ensureArgument(
