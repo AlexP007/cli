@@ -123,7 +123,7 @@ class Cli extends Singleton
         $this->print((new Formatter($string) )->red() );
     }
 
-    private function print(string $string)
+    private function print($string)
     {
         echo $string;
     }

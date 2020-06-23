@@ -137,4 +137,9 @@ class Formatter
         $this->value .= "\n";
         return $this;
     }
+
+    public function print()
+    {
+        echo $this;
+    }
 }
