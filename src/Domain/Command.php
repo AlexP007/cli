@@ -3,6 +3,7 @@
 
 namespace Cli\Domain;
 
+use Cli\Basic\Params;
 use ReflectionFunction;
 
 use Cli\Basic\Flags;
@@ -39,6 +40,11 @@ class Command
     /**
      * @var bool
      */
+    private $useParams = false;
+
+    /**
+     * @var bool
+     */
     private $useFlags = false;
 
     /**
@@ -50,7 +56,6 @@ class Command
      * @var
      */
     private $commandParametersReflection;
-
 
     public function __construct(string $name, callable $callable, array $flags)
     {
@@ -89,6 +94,10 @@ class Command
     {
         $params = $cliRequest->getParams();
 
+        if ($this->useParams() ) {
+            $params = array(new Params($params));
+        }
+
         if ($this->useFlags() ) {
             $params[] = $cliRequest->getFlags()->getFlagsObject();
         }
@@ -112,6 +121,11 @@ class Command
 
         foreach ($this->commandParametersReflection as $param) {
             $class = $param->getClass();
+            // if use params, then no validation
+            if ($class and $class->getName() === Params::class) {
+                $this->useParams = true;
+                return;
+            }
             // if with flags, we are not count last argument
             if ($class and $class->getName() === Flags::class) {
                 continue;
@@ -156,5 +170,10 @@ class Command
     public function useFlags(): bool
     {
         return $this->useFlags;
+    }
+
+    public function useParams(): bool
+    {
+        return $this->useParams;
     }
 }
