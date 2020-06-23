@@ -26,7 +26,7 @@ class Params
 
     public function __toString(): string
     {
-        return json_encode($this->getArray());
+        return json_encode($this->getArray(), JSON_PRETTY_PRINT);
     }
 
     public function getArray(): array

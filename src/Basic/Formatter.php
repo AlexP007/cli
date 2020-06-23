@@ -31,7 +31,7 @@ class Formatter
     public function __construct($value)
     {
         if (is_array($value) ) {
-            $value = json_encode($value);
+            $value = json_encode($value, JSON_PRETTY_PRINT);
         }
         $this->value = $value;
     }
