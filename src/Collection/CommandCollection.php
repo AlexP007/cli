@@ -16,6 +16,11 @@ use Cli\Domain\Command;
  */
 class CommandCollection extends Collection
 {
+    /**
+     * @param string $name
+     * @param $command
+     * @throws \Cli\Exception\ArgumentException
+     */
     public function __set(string $name, $command)
     {
         self::ensureArgument(is_a($command, Command::class),"attribute $name can only be command");

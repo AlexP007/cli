@@ -14,6 +14,11 @@ namespace Cli\Collection;
  */
 class StringCollection extends Collection
 {
+    /**
+     * @param string $name
+     * @param $value
+     * @throws \Cli\Exception\ArgumentException
+     */
     public function __set(string $name, $value)
     {
         self::ensureArgument(is_string($value),"attribute $name can only be string");

@@ -17,12 +17,21 @@ use Cli\Domain\Flag;
  */
 class FlagCollection extends Collection
 {
+    /**
+     * @param string $name
+     * @param $flag
+     * @throws \Cli\Exception\ArgumentException
+     */
     public function __set(string $name, $flag)
     {
         self::ensureArgument(is_a($flag, Flag::class),"attribute $name can only be flag");
         parent::__set($name, $flag);
     }
 
+    /**
+     * @param array $flags
+     * @throws \Cli\Exception\ArgumentException
+     */
     public function loadArray(array $flags)
     {
         foreach ($flags as $value) {
@@ -35,6 +44,9 @@ class FlagCollection extends Collection
         }
     }
 
+    /**
+     * @return array
+     */
     public function asArray(): array
     {
         $result = [];
@@ -46,6 +58,9 @@ class FlagCollection extends Collection
         return $result;
     }
 
+    /**
+     * @return Flags
+     */
     public function getFlagsObject(): Flags
     {
         return new Flags($this->asArray() );

@@ -18,12 +18,25 @@ abstract class Collection
 {
     use ArgumentThrower;
 
+    /**
+     * @var array
+     */
     protected $collection = [];
 
+    /**
+     * @var array
+     */
     private $keys = [];
 
+    /**
+     * @var int
+     */
     public $length = 0;
 
+    /**
+     * @param string $name
+     * @param $value
+     */
     public function __set(string $name, $value)
     {
         $this->keys[] = $name;
@@ -32,11 +45,19 @@ abstract class Collection
         ++$this->length;
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     */
     public function __get(string $name)
     {
         return $this->collection[$name];
     }
 
+    /**
+     * @param array $values
+     * @throws \Cli\Exception\ArgumentException
+     */
     public function loadArray(array $values)
     {
         foreach ($values as $key => $value) {
@@ -45,6 +66,9 @@ abstract class Collection
         }
     }
 
+    /**
+     * @return array
+     */
     public function asArray(): array
     {
         $result = [];
@@ -56,6 +80,9 @@ abstract class Collection
         return $result;
     }
 
+    /**
+     * @return iterable
+     */
     protected function getIterator(): iterable
     {
         for ($i = 0; $i < $this->length; $i++){
