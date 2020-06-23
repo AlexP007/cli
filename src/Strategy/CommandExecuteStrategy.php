@@ -3,8 +3,7 @@
 
 namespace Strategy;
 
-use Domain\Command;
-use Request\CliRequest;
+use Domain\{Command, CliRequest};
 
 /**
  * Class Value

@@ -4,11 +4,10 @@
 namespace Basic;
 
 use Collection\CommandCollection;
-use Domain\Command;
+use Domain\{Command, CliRequest};
 use Exception;
 use Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Registry\Config;
-use Request\CliRequest;
 use Strategy\CommandExecuteStrategy;
 
 /**

@@ -1,16 +1,16 @@
 <?php
 
 
-namespace Request;
+namespace Domain;
 
 use Collection\FlagCollection;
-use Domain\{Flag, Params};
+use Domain\Flag;
 use Registry\Config;
 use Traits\Thrower;
 
 /**
  * Class Value
- * @package Cli/Request
+ * @package Cli/Domain
  * @license MIT
  *
  * @author AlexP007
@@ -32,7 +32,7 @@ class CliRequest
     private $command;
 
     /**
-     * @var Params
+     * @var array
      */
     private $params;
 
@@ -70,7 +70,7 @@ class CliRequest
 
     private function setParams(array $args)
     {
-        $this->params = new Params($args);
+        $this->params = $args;
     }
 
     private function setFlags(array $flags)
@@ -84,7 +84,7 @@ class CliRequest
         return $this->command;
     }
 
-    public function getParams(): Params
+    public function getParams(): array
     {
         return $this->params;
     }

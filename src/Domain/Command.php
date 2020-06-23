@@ -5,7 +5,6 @@ namespace Domain;
 
 use Basic\Flags;
 use ReflectionFunction;
-use Request\CliRequest;
 use Traits\Thrower;
 
 /**
@@ -87,7 +86,7 @@ class Command
 
     private function getParamsForInvocation(CliRequest $cliRequest): array
     {
-        $params = $cliRequest->getParams()->getParamsAsArray();
+        $params = $cliRequest->getParams();
 
         if ($this->useFlags() ) {
             $params[] = $cliRequest->getFlags()->getFlagsObject();
@@ -119,7 +118,7 @@ class Command
             $param->isDefaultValueAvailable() or ++$paramsWithoutDefaultValues;
         }
 
-        $paramsCount = count($cliRequest->getParams()->getParamsAsArray() );
+        $paramsCount = count($cliRequest->getParams() );
 
         self::ensureArgument(
             $paramsCount === $paramsWithoutDefaultValues,
