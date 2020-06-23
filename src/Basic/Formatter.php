@@ -138,6 +138,9 @@ class Formatter
         return $this;
     }
 
+    /**
+     * Print this object as string
+     */
     public function print()
     {
         echo $this;
