@@ -103,12 +103,12 @@ class CommandExecuteStrategy extends Strategy
         foreach ($this->commandParametersReflection as $param) {
             $class = $param->getClass();
             // if use params, then no validation
-            if ($class and $class->getName() === Params::class) {
+            if ($class && $class->getName() === Params::class) {
                 $this->command->setUseParams(true);
                 return;
             }
             // if with flags, we are not count last argument
-            if ($class and $class->getName() === Flags::class) {
+            if ($class && $class->getName() === Flags::class) {
                 continue;
             }
             $param->isDefaultValueAvailable() or ++$paramsWithoutDefaultValues;

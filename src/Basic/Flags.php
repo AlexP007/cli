@@ -24,6 +24,11 @@ class Flags
         $this->flags = $flags;
     }
 
+    public function __toString(): string
+    {
+        return json_encode($this->getArray());
+    }
+
     public function getArray(): array
     {
         return $this->flags;

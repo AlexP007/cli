@@ -24,6 +24,11 @@ class Params
         $this->params = $params;
     }
 
+    public function __toString(): string
+    {
+        return json_encode($this->getArray());
+    }
+
     public function getArray(): array
     {
         return $this->params;
