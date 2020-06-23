@@ -16,11 +16,17 @@ use Exception;
  */
 abstract class Singleton
 {
+    /**
+     * Singleton constructor.
+     */
     private final function __construct()
     {
         $this->init();
     }
 
+    /**
+     * @return Singleton
+     */
     protected static function getInstance(): Singleton
     {
         if (static::$instance === null) {
@@ -30,14 +36,24 @@ abstract class Singleton
         return static::$instance;
     }
 
+    /**
+     * @throws Exception
+     */
     final public function __clone() {
         throw new Exception('not allowed to clone singleton');
     }
 
+    /**
+     * @throws Exception
+     */
     final public function __wakeup() {
         throw new Exception('not allowed to wakeup singleton');
     }
 
+    /**
+     * This method invoked in constructor
+     * And could be overwritten
+     */
     protected function init()
     {
     }

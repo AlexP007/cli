@@ -28,6 +28,10 @@ class Formatter
      */
     private $color;
 
+    /**
+     * Formatter constructor.
+     * @param $value
+     */
     public function __construct($value)
     {
         if (is_array($value) ) {
@@ -36,6 +40,11 @@ class Formatter
         $this->value = $value;
     }
 
+    /**
+     * @return string
+     *
+     * Return colored $value
+     */
     public function __toString(): string
     {
         $this->makeColored();
@@ -43,6 +52,9 @@ class Formatter
         return $this->value;
     }
 
+    /**
+     * Make $value colored
+     */
     private function makeColored()
     {
         switch ($this->color) {
@@ -58,38 +70,68 @@ class Formatter
         }
     }
 
+    /**
+     * Make $value red
+     */
     private function makeRed()
     {
         $this->value = "\033[31m{$this->value}\033[0m";
     }
 
+    /**
+     * Make $value blue
+     */
     private function makeBlue()
     {
         $this->value = "\033[34m{$this->value}\033[0m";
     }
+
+    /**
+     * Make value Yellow
+     */
     private function makeYellow()
     {
         $this->value = "\033[93m{$this->value}\033[0m";
     }
 
+    /**
+     * @return $this
+     *
+     * Set output color to red
+     */
     public function red()
     {
         $this->color = self::COLOR_RED;
         return $this;
     }
 
+    /**
+     * @return $this
+     *
+     * Set output color to blue
+     */
     public function blue()
     {
         $this->color = self::COLOR_BLUE;
         return $this;
     }
 
+    /**
+     * @return $this
+     *
+     * Set output color to yellow
+     */
     public function yellow()
     {
         $this->color = self::COLOR_YELLOW;
         return $this;
     }
 
+    /**
+     * @return $this
+     *
+     * Add line break
+     */
     public function line()
     {
         $this->value .= "\n";

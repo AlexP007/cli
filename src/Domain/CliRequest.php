@@ -97,9 +97,12 @@ class CliRequest
      * @param array $args
      * @param int $pointer
      *
+     * @return array
+     *
      * Recursive method
      * Collects flags with - or -- that are passed before arguments
      * Works before first non-flag value
+     *
      */
     private function collectFlags(array &$args, int $pointer = 0, array &$flags = []): array
     {
