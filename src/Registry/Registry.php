@@ -4,7 +4,8 @@
 namespace Cli\Registry;
 
 use Cli\Basic\Singleton;
-use Cli\Collection\{Collection, StringCollection};
+use Cli\Collection\Collection;
+use Cli\Collection\StringCollection;
 use Cli\Exception\RegistryException;
 
 /**
@@ -136,7 +137,7 @@ abstract class Registry extends Singleton
      * @param string $key
      * @return bool
      */
-    public function isSet(string $key): bool
+    public function isKeySet(string $key): bool
     {
         if ($this->$key) {
             return true;

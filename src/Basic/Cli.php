@@ -5,9 +5,14 @@ namespace Cli\Basic;
 
 use Exception;
 
-use Cli\Domain\{Command, CliRequest};
-use Cli\Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
-use Cli\Registry\{Config, HandlerRegistry};
+use Cli\Domain\Command;
+use Cli\Domain\CliRequest;
+use Cli\Exception\ArgumentException;
+use Cli\Exception\CommandException;
+use Cli\Exception\InterfaceException;
+use Cli\Exception\RegistryException;
+use Cli\Registry\Config;
+use Cli\Registry\HandlerRegistry;
 use Cli\Strategy\CommandExecuteStrategy;
 
 /**
@@ -151,7 +156,7 @@ class Cli extends Singleton
      */
     private function validateAllowedCommands()
     {
-        if (!$this->handlers->isSet($this->cliRequest->getCommandName() ) ) {
+        if (!$this->handlers->isKeySet($this->cliRequest->getCommandName() ) ) {
             throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");
         }
     }

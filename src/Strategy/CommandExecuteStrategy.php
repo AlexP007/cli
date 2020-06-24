@@ -3,11 +3,12 @@
 
 namespace Cli\Strategy;
 
-use Cli\Basic\Flags;
-use Cli\Basic\Params;
 use ReflectionFunction;
 
-use Cli\Domain\{Command, CliRequest};
+use Cli\Basic\Flags;
+use Cli\Basic\Params;
+use Cli\Domain\Command;
+use Cli\Domain\CliRequest;
 use Cli\Traits\ArgumentThrower;
 
 /**
