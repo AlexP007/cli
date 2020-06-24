@@ -61,13 +61,19 @@ class Cli extends Singleton
                 throw new InterfaceException("use this interface only in cli mode");
             }
 
+            // disable Notice
+            error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
             $instance = self::getInstance();
 
             $instance->setConfig($config);
             $instance->setHandleRegistry();
 
             // setting basic list command
-            if ($instance->config->list === 'Y') {
+            if (
+                $instance->config->isKeySet('list')
+                && $instance->config->list === 'Y'
+            ) {
                 $instance->setListCommand();
             }
         } catch (Exception $e) {
@@ -191,12 +197,12 @@ class Cli extends Singleton
     }
 
     /**
-     * Printing output
+     * Printing output with line break
      *
      * @param $string
      */
     private function printOut($string)
     {
-        echo $string;
+        echo $string . "\n";
     }
 }

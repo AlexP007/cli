@@ -139,10 +139,7 @@ abstract class Registry extends Singleton
      */
     public function isKeySet(string $key): bool
     {
-        if ($this->$key) {
-            return true;
-        }
-        return false;
+        return isset($this->$key);
     }
 
     /**
