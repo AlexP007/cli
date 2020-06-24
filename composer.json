@@ -1,0 +1,18 @@
+{
+    "name": "alexp007/cli",
+    "description": "Simple and lightweight library for rapid creation php cli (command line) applications",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+    {
+        "name": "AlexP007",
+        "email": "alex.p.panteleev@gmail.com"
+    }
+],
+    "require": {
+    "php": "^7.1"
+},
+    "autoload": {
+    "psr-4": {"Cli\\": "src/"}
+}
+}
