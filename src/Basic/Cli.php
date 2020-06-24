@@ -65,6 +65,11 @@ class Cli extends Singleton
 
             $instance->setConfig($config);
             $instance->setHandleRegistry();
+
+            // setting basic list command
+            if ($instance->config->list === 'Y') {
+                $instance->setListCommand();
+            }
         } catch (Exception $e) {
             self::getInstance()->redOutput($e->getMessage() );
             die();
@@ -141,6 +146,14 @@ class Cli extends Singleton
     private function setHandleRegistry()
     {
         $this->handlers = HandlerRegistry::getInstance();
+    }
+
+    /**
+     * Set basic list command
+     */
+    private function setListCommand()
+    {
+        self::handle('list', ['Cli\Command\ListCommand', 'run']);
     }
 
     /**

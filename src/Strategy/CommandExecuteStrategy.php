@@ -4,6 +4,7 @@
 namespace Cli\Strategy;
 
 use ReflectionFunction;
+use ReflectionMethod;
 
 use Cli\Basic\Flags;
 use Cli\Basic\Params;
@@ -30,12 +31,17 @@ class CommandExecuteStrategy extends Strategy
     private $command;
 
     /**
+     * @var bool
+     */
+    private $invokeMethod = false;
+
+    /**
      * @var CliRequest
      */
     private $cliRequest;
 
     /**
-     * @var ReflectionFunction
+     * #var ReflectionFunction or ReflectionMethod
      */
     private $commandReflection;
 
@@ -54,6 +60,11 @@ class CommandExecuteStrategy extends Strategy
     {
         $this->command = $command;
         $this->cliRequest = $cliRequest;
+
+        $callable = $command->getCallable();
+        if (is_array($callable) ) {
+            $this->invokeMethod = true;
+        }
     }
 
     /**
@@ -65,6 +76,10 @@ class CommandExecuteStrategy extends Strategy
         $this->validate();
 
         $params = $this->getParamsForInvocation();
+
+        if ($this->invokeMethod) {
+            return $this->commandReflection->invokeArgs(null, $params);
+        }
 
         return $this->commandReflection->invokeArgs($params);
     }
@@ -88,31 +103,16 @@ class CommandExecuteStrategy extends Strategy
     }
 
     /**
-     * Preparing parameters and flags for command invocation
-     *
-     * @return array
-     */
-    private function getParamsForInvocation(): array
-    {
-        $params = $this->cliRequest->getParams();
-
-        if ($this->command->useParams() ) {
-            $params = array(new Params($params));
-        }
-
-        if ($this->command->useFlags() ) {
-            $params[] = $this->cliRequest->getFlags()->getFlagsObject();
-        }
-
-        return $params;
-    }
-
-    /**
      * @throws \ReflectionException
      */
     private function setCommandReflection()
     {
-        $this->commandReflection = new ReflectionFunction($this->command->getCallable() );
+        if ($this->invokeMethod) {
+            $callable = $this->command->getCallable();
+            $this->commandReflection = new ReflectionMethod($callable[0], $callable[1]);
+        } else {
+            $this->commandReflection = new ReflectionFunction($this->command->getCallable());
+        }
     }
 
     /**
@@ -127,7 +127,7 @@ class CommandExecuteStrategy extends Strategy
      * @throws \Cli\Exception\ArgumentException
      *
      * Validate that number of incoming parameters
-     * Is equal to number of command parameters
+     * is equal to number of command parameters
      */
     private function validateIncomingParameters()
     {
@@ -173,5 +173,25 @@ class CommandExecuteStrategy extends Strategy
             count($diff) < 1,
             '[' .join(', ', $diff) . "] are not allowed flags for command {{$commandName}}"
         );
+    }
+
+    /**
+     * Preparing parameters and flags for command invocation
+     *
+     * @return array
+     */
+    private function getParamsForInvocation(): array
+    {
+        $params = $this->cliRequest->getParams();
+
+        if ($this->command->useParams() ) {
+            $params = array(new Params($params));
+        }
+
+        if ($this->command->useFlags() ) {
+            $params[] = $this->cliRequest->getFlags()->getFlagsObject();
+        }
+
+        return $params;
     }
 }

@@ -25,7 +25,8 @@ class Config extends Registry
     protected function getAllowedKeys(): array
     {
         return [
-            'script_file_name'
+            'script_file_name',
+            'list',
         ];
     }
 
