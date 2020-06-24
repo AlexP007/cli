@@ -63,11 +63,11 @@ class CliRequest
     }
 
     /**
-     * @param string $value
-     * @throws \Cli\Exception\ArgumentException
-     *
      * Validating first value in args (GLOBALS)
      * Should be the name of this script (configured when initialize)
+     *
+     * @param string $value
+     * @throws \Cli\Exception\ArgumentException
      */
     private function validateFirstArgsKeyValue(string $value)
     {
@@ -125,14 +125,14 @@ class CliRequest
     }
 
     /**
+     * Recursive method
+     * Collects flags with - or -- that are passed before arguments
+     * Works before finds first non-flag value
+     *
      * @param array $args
      * @param int $pointer
      *
      * @return array
-     *
-     * Recursive method
-     * Collects flags with - or -- that are passed before arguments
-     * Works before first non-flag value
      */
     private function collectFlags(array &$args, int $pointer = 0, array &$flags = []): array
     {
@@ -147,9 +147,9 @@ class CliRequest
     }
 
     /**
-     * @param array $args
+     * Unset all flags values before first non-flag value
      *
-     * Cleans all flags values before first non-flag value
+     * @param array $args
      */
     private function cleanArgsFromFlags(array &$args)
     {

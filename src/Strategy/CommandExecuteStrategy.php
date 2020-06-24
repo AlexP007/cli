@@ -45,6 +45,7 @@ class CommandExecuteStrategy extends Strategy
 
     /**
      * CommandExecuteStrategy constructor.
+     *
      * @param Command $command
      * @param CliRequest $cliRequest
      */
@@ -86,9 +87,9 @@ class CommandExecuteStrategy extends Strategy
     }
 
     /**
-     * @return array
-     *
      * Preparing parameters and flags for command invocation
+     *
+     * @return array
      */
     private function getParamsForInvocation(): array
     {

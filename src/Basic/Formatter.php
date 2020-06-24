@@ -41,9 +41,9 @@ class Formatter
     }
 
     /**
-     * @return string
-     *
      * Return colored $value
+     *
+     * @return string
      */
     public function __toString(): string
     {
@@ -95,9 +95,9 @@ class Formatter
     }
 
     /**
-     * @return $this
+     * Set color to red
      *
-     * Set output color to red
+     * @return $this
      */
     public function red()
     {
@@ -106,9 +106,9 @@ class Formatter
     }
 
     /**
-     * @return $this
+     * Set color to blue
      *
-     * Set output color to blue
+     * @return $this
      */
     public function blue()
     {
@@ -117,9 +117,9 @@ class Formatter
     }
 
     /**
-     * @return $this
+     * Set color to yellow
      *
-     * Set output color to yellow
+     * @return $this
      */
     public function yellow()
     {
@@ -128,9 +128,9 @@ class Formatter
     }
 
     /**
-     * @return $this
-     *
      * Add line break
+     *
+     * @return $this
      */
     public function line()
     {
@@ -139,7 +139,7 @@ class Formatter
     }
 
     /**
-     * Print this object as string
+     * Print this
      */
     public function print()
     {

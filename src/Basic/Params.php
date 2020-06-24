@@ -25,9 +25,9 @@ class Params
     }
 
     /**
-     * @return string
-     *
      * Return json string
+     *
+     * @return string
      */
     public function __toString(): string
     {

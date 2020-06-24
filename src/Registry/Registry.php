@@ -72,9 +72,9 @@ abstract class Registry extends Singleton
     }
 
     /**
-     * @return bool
-     *
      * Need or not to validate uniq keys for this Registry
+     *
+     * @return bool
      */
     protected abstract function validateAllowedKeys(): bool;
 

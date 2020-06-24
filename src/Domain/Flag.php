@@ -26,6 +26,7 @@ class Flag
 
     /**
      * Flag constructor.
+     *
      * @param string $flag
      */
     public function __construct(string $flag)
@@ -66,10 +67,10 @@ class Flag
     }
 
     /**
+     * Check if string could be split into valid flag
+     *
      * @param string $value
      * @return false|int
-     *
-     * Check if string could be split into valid flag
      */
     public static function isFlag(string $value): bool
     {

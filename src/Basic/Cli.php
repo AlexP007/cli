@@ -44,9 +44,9 @@ class Cli extends Singleton
     private $cliRequest;
 
     /**
-     * @param array $config
-     *
      * Initializing config and handler registry
+     *
+     * @param array $config
      */
     public final static function initialize(array $config)
     {
@@ -94,11 +94,14 @@ class Cli extends Singleton
     }
 
     /**
+     * Handle command
+     *
+     * Saving command with all parameters
+     * To handler registry
+     *
      * @param string $command
      * @param callable $callback
      * @param array $flags
-     *
-     * Handle command
      */
     public final static function handle(string $command, callable $callback, array $flags = [])
     {
@@ -112,6 +115,8 @@ class Cli extends Singleton
     }
 
     /**
+     * Setting config
+     *
      * @param array $config
      * @throws Exception
      */
@@ -152,9 +157,9 @@ class Cli extends Singleton
     }
 
     /**
-     * @param string $string
+     * Print output in red color
      *
-     * Echo output in red color
+     * @param string $string
      */
     private function redOutput(string $string)
     {
@@ -162,9 +167,9 @@ class Cli extends Singleton
     }
 
     /**
-     * @param $string
-     *
      * Printing output
+     *
+     * @param $string
      */
     private function print($string)
     {

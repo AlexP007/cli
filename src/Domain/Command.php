@@ -41,6 +41,7 @@ class Command
 
     /**
      * Command constructor.
+     *
      * @param string $name
      * @param callable $callable
      * @param array $flags
