@@ -28,6 +28,9 @@ $config is an array of basic configurations.
 For now time there is only one option you MUST pass: 
 * script_file_name - name of the file
 
+there are also additional options:
+* list (list => 'Y') the list command will be available
+
 ### Handling Commands
     Cli::handle(string  $command, callable  $callback, array  $flags = array(), array $env = array())
     
@@ -117,4 +120,6 @@ The output of command "php cli.php sayHi -f=flag pete lena"
     {
         "-f": "flag"
     } 
-    
+   
+### Predefined Commands
+If list is set to 'Y' you could list all commands to output by using 'list' command
