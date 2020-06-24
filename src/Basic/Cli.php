@@ -5,7 +5,6 @@ namespace Cli\Basic;
 
 use Exception;
 
-use Cli\Collection\CommandCollection;
 use Cli\Domain\{Command, CliRequest};
 use Cli\Exception\{ArgumentException, CommandException, InterfaceException, RegistryException};
 use Cli\Registry\{Config, HandlerRegistry};
@@ -24,6 +23,9 @@ class Cli extends Singleton
 {
     const CLI_SAPI_NAME = "cli";
 
+    /**
+     * @var Cli
+     */
     protected static $instance;
 
     /**
@@ -41,9 +43,15 @@ class Cli extends Singleton
      */
     private $cliRequest;
 
+    /**
+     * @param array $config
+     *
+     * Initializing config and handler registry
+     */
     public final static function initialize(array $config)
     {
         try {
+            // checking the correct SAPI interface
             if (PHP_SAPI != self::CLI_SAPI_NAME) {
                 throw new InterfaceException("use this interface only in cli mode");
             }
@@ -58,6 +66,11 @@ class Cli extends Singleton
         }
     }
 
+    /**
+     * Main method that run application
+     * Setting request, validating allowed command
+     * Execute command and print output
+     */
     public final static function run()
     {
         try {
@@ -80,6 +93,13 @@ class Cli extends Singleton
         }
     }
 
+    /**
+     * @param string $command
+     * @param callable $callback
+     * @param array $flags
+     *
+     * Handle command
+     */
     public final static function handle(string $command, callable $callback, array $flags = [])
     {
         try {
@@ -91,6 +111,10 @@ class Cli extends Singleton
         }
     }
 
+    /**
+     * @param array $config
+     * @throws Exception
+     */
     private function setConfig(array $config)
     {
         $this->config = Config::getInstance();
@@ -101,16 +125,25 @@ class Cli extends Singleton
         }
     }
 
+    /**
+     * Setting Handle Registry
+     */
     private function setHandleRegistry()
     {
         $this->handlers = HandlerRegistry::getInstance();
     }
 
+    /**
+     * Set request
+     */
     private function setRequest()
     {
         $this->cliRequest = new CliRequest($GLOBALS['argv'], self::getInstance()->config);
     }
 
+    /**
+     * @throws CommandException
+     */
     private function validateAllowedCommands()
     {
         if (!$this->handlers->isSet($this->cliRequest->getCommandName() ) ) {
@@ -118,11 +151,21 @@ class Cli extends Singleton
         }
     }
 
+    /**
+     * @param string $string
+     *
+     * Echo output in red color
+     */
     private function redOutput(string $string)
     {
         $this->print((new Formatter($string) )->red() );
     }
 
+    /**
+     * @param $string
+     *
+     * Printing output
+     */
     private function print($string)
     {
         echo $string;
