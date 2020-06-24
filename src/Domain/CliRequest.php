@@ -136,7 +136,7 @@ class CliRequest
      */
     private function collectFlags(array &$args, int $pointer = 0, array &$flags = []): array
     {
-        if ($pointer + 1 < count($args) ) {
+        if ($pointer < count($args) ) {
             if (Flag::isFlag($args[$pointer]) ) {
                 $flags[] = $args[$pointer];
                 $this->collectFlags($args, $pointer + 1, $flags);
