@@ -1,5 +1,5 @@
-# PHP Cli application library
-*for rapid creating php cli (command line) applications*
+# PHP CLI APP
+*simple and lightweight library for rapid creation php cli (command line) applications*
 
 ## Basic usage
     use Cli\Basic\{Cli, Formatter};
