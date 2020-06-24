@@ -1,6 +1,9 @@
 # PHP CLI APP
 *simple and lightweight library for rapid creation php cli (command line) applications*
 
+### Installation 
+    composer require --prefer-dist alexp007/cli
+
 ## Basic usage
     use Cli\Basic\{Cli, Formatter};
     
