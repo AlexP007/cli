@@ -156,4 +156,12 @@ abstract class Registry extends Singleton
             throw new RegistryException($message);
         }
     }
+
+    /**
+     * @return array
+     */
+    public function asArray(): array
+    {
+        return $this->collection->asArray();
+    }
 }

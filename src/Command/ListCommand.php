@@ -3,6 +3,9 @@
 
 namespace Cli\Command;
 
+use ReflectionFunction;
+use ReflectionMethod;
+
 use Cli\Basic\Environment;
 use Cli\Basic\Formatter;
 
@@ -17,10 +20,48 @@ use Cli\Basic\Formatter;
  */
 class ListCommand
 {
+    /**
+     * Iterates thru all handled command
+     * and returned summary
+     *
+     * @param Environment $env
+     * @throws \ReflectionException
+     */
     public static function run(Environment $env)
     {
-        $handlers = $env->getEnv('handlers');
+        $handlers = $env->getEnv('handlers')->asArray();
+        $result = [];
 
-        var_dump($handlers);
+        foreach ($handlers as $command) {
+            $callable = $command->getCallable();
+            if (is_array($callable) ) {
+                $commandReflection = new ReflectionMethod($callable[0], $callable[1]);
+            } else {
+                $commandReflection = new ReflectionFunction($callable);
+            }
+            $parameters = [];
+
+            foreach ($commandReflection->getParameters() as $param) {
+                $parameters[] = $param->getName();
+            }
+
+            $result[] = [$command->getName(), $parameters, $command->getFlags()];
+        }
+
+        usort($result, function ($a, $b) {
+            return $a[0] > $b[0];
+        });
+
+
+        // prepare for output
+        $output = '';
+
+        foreach ($result as $i) {
+            $params = join(', ' ,$i[1]);
+            $flags = join(', ' ,$i[2]);
+            $output .= $i[0] . ": " . "params: [$params] ; flags: [$flags] \n";
+        }
+
+        return (new Formatter($output))->yellow();
     }
 }
