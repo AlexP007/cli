@@ -112,8 +112,9 @@ class Cli extends Singleton
      * @param string $command
      * @param callable $callback
      * @param array $flags
+     * @param array $env
      */
-    public final static function handle(string $command, callable $callback, array $flags = [], $env = [])
+    public final static function handle(string $command, callable $callback, array $flags = [], array $env = [])
     {
         try {
             $newCommand = new Command($command, $callback, $flags, $env);

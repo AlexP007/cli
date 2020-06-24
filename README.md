@@ -29,11 +29,12 @@ For now time there is only one option you MUST pass:
 * script_file_name - name of the file
 
 ### Handling Commands
-    Cli::handle(string  $command, callable  $callback, array  $flags = array())
+    Cli::handle(string  $command, callable  $callback, array  $flags = array(), array $env = array())
     
 * $command is the name of command for execution via cli
 * $callback is function that will be invoked
 * $flags array of available flags for this command
+* $env array of environment variables that will be passed to $callback
 
 ### Basic rules
 * Flags must be passed before parameters when executing command via cli (example: php cli.php sayHi -f pete)
