@@ -141,7 +141,7 @@ class Formatter
     /**
      * Print this
      */
-    public function print()
+    public function printOut()
     {
         echo $this;
     }

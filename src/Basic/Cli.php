@@ -86,7 +86,7 @@ class Cli extends Singleton
                 $instance->cliRequest
             );
 
-            $instance->print($commandExecutor->run() );
+            $instance->printOut($commandExecutor->run() );
         } catch (Exception $e) {
             self::getInstance()->redOutput($e->getMessage() );
             die();
@@ -163,7 +163,7 @@ class Cli extends Singleton
      */
     private function redOutput(string $string)
     {
-        $this->print((new Formatter($string) )->red() );
+        $this->printOut((new Formatter($string) )->red() );
     }
 
     /**
@@ -171,7 +171,7 @@ class Cli extends Singleton
      *
      * @param $string
      */
-    private function print($string)
+    private function printOut($string)
     {
         echo $string;
     }
