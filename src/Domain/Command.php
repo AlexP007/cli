@@ -3,6 +3,8 @@
 
 namespace Cli\Domain;
 
+use Cli\Basic\Environment;
+
 /**
  * Class Value
  * @package Cli/Domain
@@ -30,6 +32,11 @@ class Command
     private $flags;
 
     /**
+     * @var Environment
+     */
+    private $environment;
+
+    /**
      * @var bool
      */
     private $useParams = false;
@@ -40,20 +47,30 @@ class Command
     private $useFlags = false;
 
     /**
+     * @var bool
+     */
+    private $useEnv = false;
+
+    /**
      * Command constructor.
      *
      * @param string $name
      * @param callable $callable
      * @param array $flags
      */
-    public function __construct(string $name, callable $callable, array $flags)
+    public function __construct(string $name, callable $callable, array $flags, array $env)
     {
         $this->name = $name;
         $this->callable = $callable;
         $this->flags = $flags;
+        $this->environment = new Environment($env);
 
         if (count($flags) > 0) {
             $this->useFlags = true;
+        }
+
+        if (count($env) > 0) {
+            $this->useEnv = true;
         }
     }
 
@@ -90,6 +107,14 @@ class Command
     }
 
     /**
+     * @return array
+     */
+    public function getEnv(): Environment
+    {
+        return $this->environment;
+    }
+
+    /**
      * @return bool
      */
     public function useFlags(): bool
@@ -103,5 +128,13 @@ class Command
     public function useParams(): bool
     {
         return $this->useParams;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useEnv(): bool
+    {
+        return $this->useEnv;
     }
 }

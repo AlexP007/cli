@@ -113,10 +113,10 @@ class Cli extends Singleton
      * @param callable $callback
      * @param array $flags
      */
-    public final static function handle(string $command, callable $callback, array $flags = [])
+    public final static function handle(string $command, callable $callback, array $flags = [], $env = [])
     {
         try {
-            $newCommand = new Command($command, $callback, $flags);
+            $newCommand = new Command($command, $callback, $flags, $env);
             self::getInstance()->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
            self::getInstance()->redOutput($e->getMessage() . "in Cli::handle command $command");
@@ -153,7 +153,12 @@ class Cli extends Singleton
      */
     private function setListCommand()
     {
-        self::handle('list', ['Cli\Command\ListCommand', 'run']);
+        self::handle(
+            'list',
+            ['Cli\Command\ListCommand', 'run'],
+            [],
+            ['handlers' => $this->handlers]
+        );
     }
 
     /**

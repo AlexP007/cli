@@ -7,6 +7,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 
 use Cli\Basic\Flags;
+use Cli\Basic\Environment;
 use Cli\Basic\Params;
 use Cli\Domain\Command;
 use Cli\Domain\CliRequest;
@@ -142,8 +143,13 @@ class CommandExecuteStrategy extends Strategy
                 return;
             }
 
-            // if with flags, we are not count last argument
+            // if with flags, we are not count this argument
             if ($class && $class->getName() === Flags::class) {
+                continue;
+            }
+
+            // if with env, we are not count last this argument
+            if ($class && $class->getName() === Environment::class) {
                 continue;
             }
 
@@ -190,6 +196,10 @@ class CommandExecuteStrategy extends Strategy
 
         if ($this->command->useFlags() ) {
             $params[] = $this->cliRequest->getFlags()->getFlagsObject();
+        }
+
+        if ($this->command->useEnv() ) {
+            $params[] = $this->command->getEnv();
         }
 
         return $params;

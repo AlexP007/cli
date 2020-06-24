@@ -3,6 +3,9 @@
 
 namespace Cli\Command;
 
+use Cli\Basic\Environment;
+use Cli\Basic\Formatter;
+
 /**
  * Class Value
  * @package Cli/Command
@@ -14,8 +17,10 @@ namespace Cli\Command;
  */
 class ListCommand
 {
-    public static function run()
+    public static function run(Environment $env)
     {
-        return 'this is list comd';
+        $handlers = $env->getEnv('handlers');
+
+        var_dump($handlers);
     }
 }
