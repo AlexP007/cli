@@ -101,7 +101,7 @@ The output of command "php cli.php sayHi -f=flag pete"
         "-f": flag
     }
     
-If you dont now the number of incoming parameters you could use Params object
+If you don't know the number of incoming parameters you could use Params object
 
     Cli::handle('sayHi', function (\Cli\Basic\Params $params, \Cli\Basic\Flags $flags) {
        $fmt = new Formatter($params);
