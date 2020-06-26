@@ -3,14 +3,12 @@
 
 namespace Cli\Strategy;
 
-use ReflectionFunction;
-use ReflectionMethod;
-
 use Cli\Basic\Flags;
 use Cli\Basic\Environment;
 use Cli\Basic\Params;
 use Cli\Domain\Command;
 use Cli\Domain\CliRequest;
+use Cli\Reflections\CommandReflection;
 use Cli\Traits\ArgumentThrower;
 
 /**
@@ -32,24 +30,14 @@ class CommandExecuteStrategy extends Strategy
     private $command;
 
     /**
-     * @var bool
+     * @var CommandReflection
      */
-    private $invokeMethod = false;
+    private $commandReflection;
 
     /**
      * @var CliRequest
      */
     private $cliRequest;
-
-    /**
-     * #var ReflectionFunction or ReflectionMethod
-     */
-    private $commandReflection;
-
-    /**
-     * @var
-     */
-    private $commandParametersReflection;
 
     /**
      * CommandExecuteStrategy constructor.
@@ -60,12 +48,8 @@ class CommandExecuteStrategy extends Strategy
     public function __construct(Command $command, CliRequest $cliRequest)
     {
         $this->command = $command;
+        $this->commandReflection = new CommandReflection($command);
         $this->cliRequest = $cliRequest;
-
-        $callable = $command->getCallable();
-        if (is_array($callable) ) {
-            $this->invokeMethod = true;
-        }
     }
 
     /**
@@ -73,25 +57,10 @@ class CommandExecuteStrategy extends Strategy
      */
     public function run()
     {
-        $this->setReflections();
         $this->validate();
-
         $params = $this->getParamsForInvocation();
 
-        if ($this->invokeMethod) {
-            return $this->commandReflection->invokeArgs(null, $params);
-        }
-
-        return $this->commandReflection->invokeArgs($params);
-    }
-
-    /**
-     * Set reflections
-     */
-    private function setReflections()
-    {
-        $this->setCommandReflection();
-        $this->setCommandParametersReflection();
+        return $this->commandReflection->invoke($params);
     }
 
     /**
@@ -104,27 +73,6 @@ class CommandExecuteStrategy extends Strategy
     }
 
     /**
-     * @throws \ReflectionException
-     */
-    private function setCommandReflection()
-    {
-        if ($this->invokeMethod) {
-            $callable = $this->command->getCallable();
-            $this->commandReflection = new ReflectionMethod($callable[0], $callable[1]);
-        } else {
-            $this->commandReflection = new ReflectionFunction($this->command->getCallable());
-        }
-    }
-
-    /**
-     * Set this commandParametersReflection
-     */
-    private function setCommandParametersReflection()
-    {
-        $this->commandParametersReflection = $this->commandReflection->getParameters();
-    }
-
-    /**
      * @throws \Cli\Exception\ArgumentException
      *
      * Validate that number of incoming parameters
@@ -133,8 +81,9 @@ class CommandExecuteStrategy extends Strategy
     private function validateIncomingParameters()
     {
         $paramsWithoutDefaultValues = 0;
+        $params = $this->commandReflection->getParameters();
 
-        foreach ($this->commandParametersReflection as $param) {
+        foreach ($params as $param) {
             $class = $param->getClass();
 
             // if use params, then no validation
