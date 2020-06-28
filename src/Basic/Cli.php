@@ -179,7 +179,7 @@ class Cli extends Singleton
     private function validateAllowedCommands()
     {
         $commandName = $this->cliRequest->getCommandName();
-        if (is_null($this->handlers->$commandName) ) { // todo refactoring
+        if (!$this->handlers->isSet($commandName) ) {
             throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");
         }
     }

@@ -111,7 +111,7 @@ abstract class Registry
      */
     public function __set(string $key, $value)
     {
-        $this->setValue($key, $value); // todo refactoring
+        $this->setValue($key, $value);
     }
 
     /**
@@ -120,7 +120,16 @@ abstract class Registry
      */
     public function __get(string $key)
     {
-        return $this->getValue($key); // todo refactoring
+        return $this->getValue($key);
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function isSet(string $key)
+    {
+        return !is_null($this->$key);
     }
 
     /**
