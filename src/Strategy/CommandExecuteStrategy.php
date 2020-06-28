@@ -57,7 +57,7 @@ class CommandExecuteStrategy extends Strategy
      */
     public function run()
     {
-        $this->validate();
+        $this->validate(); // todo extract validation to validator or Command domain
         $params = $this->getParamsForInvocation();
 
         return $this->commandReflection->invoke($params);

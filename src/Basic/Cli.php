@@ -3,6 +3,7 @@
 
 namespace Cli\Basic;
 
+use Cli\Strategy\CliInitializeStrategy;
 use Exception;
 
 use Cli\Domain\Command;
@@ -10,7 +11,6 @@ use Cli\Domain\CliRequest;
 use Cli\Exception\ArgumentException;
 use Cli\Exception\CommandException;
 use Cli\Exception\InterfaceException;
-use Cli\Exception\RegistryException;
 use Cli\Registry\Config;
 use Cli\Registry\HandlerRegistry;
 use Cli\Strategy\CommandExecuteStrategy;
@@ -64,15 +64,10 @@ class Cli extends Singleton
             // disable Notice
             error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-            $instance = self::getInstance();
+            // initialize strategy
+            $initializeStrategy = new CliInitializeStrategy(self::getInstance(), $config);
+            $initializeStrategy->run();
 
-            $instance->setConfig($config);
-            $instance->setHandleRegistry();
-
-            // setting basic list command
-            if ($instance->config->list === 'Y') {
-                $instance->setListCommand();
-            }
         } catch (Exception $e) {
             self::getInstance()->redOutput($e->getMessage() );
             die();
@@ -128,41 +123,17 @@ class Cli extends Singleton
         }
     }
 
-    /**
-     * Setting config
-     *
-     * @param array $config
-     * @throws Exception
-     */
-    private function setConfig(array $config)
+    public function setConfig(Config $config)
     {
-        $this->config = new Config();
-        try {
-            $this->config->load($config);
-        } catch (RegistryException $e) {
-            throw new Exception($e->getMessage() . ' in Cli::initialize configuration');
-        }
+        $this->config = $config;
     }
 
     /**
      * Setting Handle Registry
      */
-    private function setHandleRegistry()
+    public function setHandlers(HandlerRegistry $handlers)
     {
-        $this->handlers = new HandlerRegistry();
-    }
-
-    /**
-     * Set basic list command
-     */
-    private function setListCommand()
-    {
-        self::handle(
-            'list',
-            ['Cli\Command\ListCommand', 'run'],
-            [],
-            ['handlers' => $this->handlers]
-        );
+        $this->handlers = $handlers;
     }
 
     /**
