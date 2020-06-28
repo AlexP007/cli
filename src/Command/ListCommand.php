@@ -6,6 +6,8 @@ namespace Cli\Command;
 use ReflectionFunction;
 use ReflectionMethod;
 
+use Cli\Basic\Flags;
+use Cli\Basic\Params;
 use Cli\Basic\Environment;
 use Cli\Basic\Formatter;
 
@@ -42,6 +44,23 @@ class ListCommand
             $parameters = [];
 
             foreach ($commandReflection->getParameters() as $param) {
+                $class = $param->getClass();
+
+                // if use params, then no validation
+                if ($class && $class->getName() === Params::class) {
+                    continue;
+                }
+
+                // if with flags, we are not count this argument
+                if ($class && $class->getName() === Flags::class) {
+                    continue;
+                }
+
+                // if with env, we are not count last this argument
+                if ($class && $class->getName() === Environment::class) {
+                    continue;
+                }
+
                 $parameters[] = $param->getName();
             }
 
