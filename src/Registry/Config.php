@@ -15,11 +15,6 @@ namespace Cli\Registry;
 class Config extends Registry
 {
     /**
-     * @var Config
-     */
-    protected static $instance;
-
-    /**
      * @return array
      */
     protected function getAllowedKeys(): array

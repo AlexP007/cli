@@ -16,12 +16,6 @@ use Cli\Collection\CommandCollection;
  */
 class HandlerRegistry extends Registry
 {
-
-    /**
-     * @var HandlerRegistry
-     */
-    protected static $instance;
-
     /**
      * Initialize this Registry with CommandCollection
      */

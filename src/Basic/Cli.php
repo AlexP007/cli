@@ -70,10 +70,7 @@ class Cli extends Singleton
             $instance->setHandleRegistry();
 
             // setting basic list command
-            if (
-                $instance->config->isKeySet('list')
-                && $instance->config->list === 'Y'
-            ) {
+            if ($instance->config->list === 'Y') {
                 $instance->setListCommand();
             }
         } catch (Exception $e) {
@@ -139,7 +136,7 @@ class Cli extends Singleton
      */
     private function setConfig(array $config)
     {
-        $this->config = Config::getInstance();
+        $this->config = new Config();
         try {
             $this->config->load($config);
         } catch (RegistryException $e) {
@@ -152,7 +149,7 @@ class Cli extends Singleton
      */
     private function setHandleRegistry()
     {
-        $this->handlers = HandlerRegistry::getInstance();
+        $this->handlers = new HandlerRegistry();
     }
 
     /**
@@ -181,7 +178,8 @@ class Cli extends Singleton
      */
     private function validateAllowedCommands()
     {
-        if (!$this->handlers->isKeySet($this->cliRequest->getCommandName() ) ) {
+        $commandName = $this->cliRequest->getCommandName();
+        if (is_null($this->handlers->$commandName) ) { // todo refactoring
             throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");
         }
     }
