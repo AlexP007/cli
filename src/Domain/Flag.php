@@ -3,8 +3,6 @@
 
 namespace Cli\Domain;
 
-use Error;
-
 /**
  * Class Value
  * @package Cli/Domain

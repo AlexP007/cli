@@ -3,9 +3,10 @@
 
 namespace Cli\Domain;
 
-use Error;
-
+use Cli\Basic\Flags;
+use Cli\Basic\Params;
 use Cli\Basic\Environment;
+use Cli\Reflections\CommandReflection;
 
 /**
  * Class Value
@@ -39,9 +40,29 @@ class Command extends Domain
     private $environment;
 
     /**
+     * @var CommandReflection
+     */
+    private $commandReflection;
+
+    /**
+     * @var CliRequest
+     */
+    private $cliRequest;
+
+    /**
+     * @var int
+     */
+    private $simpleParams = 0;
+
+    /**
      * @var bool
      */
     private $useParams = false;
+
+    /**
+     * @var int
+     */
+    private $paramsPosition;
 
     /**
      * @var bool
@@ -49,9 +70,19 @@ class Command extends Domain
     private $useFlags = false;
 
     /**
+     * @var int
+     */
+    private $flagsPosition;
+
+    /**
      * @var bool
      */
     private $useEnv = false;
+
+    /**
+     * @var int
+     */
+    private $envPosition;
 
     /**
      * Command constructor.
@@ -86,12 +117,95 @@ class Command extends Domain
         );
     }
 
-    /**
-     * @param bool $val
-     */
-    public function setUseParams(bool $val)
+    public function prepareForInvocation(CliRequest $cliRequest)
     {
-        $this->useParams = $val;
+        $this->commandReflection = new CommandReflection($this);
+        $this->cliRequest = $cliRequest;
+        $this->scanParameters();
+    }
+
+    private function scanParameters()
+    {
+        $params = $this->commandReflection->getParameters();
+
+        foreach ($params as $param) {
+            $class = $param->getClass();
+
+            // if use params, then no validation
+            if ($class && $class->getName() === Params::class) {
+                $this->useParams = true;
+                $this->paramsPosition = $param->getPosition();
+                continue;
+            }
+
+            // if with flags, we are not count this argument
+            if ($class && $class->getName() === Flags::class) {
+                $this->flagsPosition = $param->getPosition();
+                continue;
+            }
+
+            // if with env, we are not count last this argument
+            if ($class && $class->getName() === Environment::class) {
+                $this->envPosition = $param->getPosition();
+                continue;
+            }
+
+            $param->isDefaultValueAvailable() or ++$this->simpleParams;
+        }
+    }
+
+    /**
+     * Validate flags and parameters in CliRequest
+     *
+     * @throws \Cli\Exception\ArgumentException
+     */
+    public function validateRequest()
+    {
+        $this->validateAllowedFlags();
+        $this->validateIncomingParameters();
+    }
+
+    /**
+     * @throws \Cli\Exception\ArgumentException
+     */
+    private function validateAllowedFlags()
+    {
+        $flags = array_keys($this->cliRequest->getFlags()->asArray() );
+        $diff = array_diff($flags, $this->getFlags() );
+
+        $commandName = $this->getName();
+
+        self::ensureArgument(
+            count($diff) < 1,
+            '[' .join(', ', $diff) . "] are not allowed flags for command {{$commandName}}"
+        );
+    }
+
+    /**
+     * Validate that number of incoming parameters
+     * is equal to number of command parameters
+     *
+     * @throws \Cli\Exception\ArgumentException
+     */
+    private function validateIncomingParameters()
+    {
+
+        if ($this->useParams()) {
+            return;
+        }
+
+        $paramsCount = count($this->cliRequest->getParams() );
+        $commandName = $this->getName();
+
+        self::ensureArgument(
+            $paramsCount === $this->simpleParams,
+            "{{$commandName}} expected {$this->simpleParams} params got: $paramsCount"
+        );
+    }
+
+    public function invoke(array $params)
+    {
+        return $this->commandReflection->invoke($params);
     }
 
     /**

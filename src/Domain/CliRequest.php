@@ -3,11 +3,8 @@
 
 namespace Cli\Domain;
 
-use Error;
-
 use Cli\Collection\FlagCollection;
 use Cli\Registry\Config;
-use Cli\Traits\ArgumentThrower;
 
 /**
  * Class Value
