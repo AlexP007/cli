@@ -56,7 +56,12 @@ This means that you cannot pass parameters more or less than expected (Optional 
 
     Cli::run() 
     
-    
+### Invoking callback
+
+    function(Params $params, Environment $env, Flags $flags) {}
+ 
+* Params, Flags or Environment will be passed into callback in order you specify the arguments
+        
 ### Formatter
 
     use Cli\Basic\Formatter;
