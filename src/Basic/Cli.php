@@ -4,6 +4,7 @@
 namespace Cli\Basic;
 
 use Cli\Strategy\CliInitializeStrategy;
+use Cli\Strategy\CliRunStrategy;
 use Exception;
 
 use Cli\Domain\Command;
@@ -44,11 +45,6 @@ class Cli extends Singleton
     private $handlers;
 
     /**
-     * @var CliRequest;
-     */
-    private $cliRequest;
-
-    /**
      * Initializing config and handler registry
      *
      * @param array $config
@@ -83,18 +79,11 @@ class Cli extends Singleton
     {
         try {
             $instance = self::getInstance();
-
-            $instance->setRequest();
-
-            $instance->validateAllowedCommands();
-            $command = $instance->cliRequest->getCommandName();
-
-            $commandExecutor = new CommandExecuteStrategy(
-                $instance->handlers->$command,
-                $instance->cliRequest
-            );
-
-            $instance->printOut($commandExecutor->run() );
+            $cliRequest = new CliRequest($GLOBALS['argv'], $instance->config);
+            $handlers = $instance->handlers;
+            // run strategy
+            $runStrategy = new CliRunStrategy($instance, $cliRequest, $handlers);
+            $instance->printOut($runStrategy->run());
         } catch (Exception $e) {
             self::getInstance()->redOutput($e->getMessage() );
             die();
@@ -134,25 +123,6 @@ class Cli extends Singleton
     public function setHandlers(HandlerRegistry $handlers)
     {
         $this->handlers = $handlers;
-    }
-
-    /**
-     * Set request
-     */
-    private function setRequest()
-    {
-        $this->cliRequest = new CliRequest($GLOBALS['argv'], self::getInstance()->config);
-    }
-
-    /**
-     * @throws CommandException
-     */
-    private function validateAllowedCommands()
-    {
-        $commandName = $this->cliRequest->getCommandName();
-        if (!$this->handlers->isSet($commandName) ) {
-            throw new CommandException("not allowed command {$this->cliRequest->getCommandName()}");
-        }
     }
 
     /**
