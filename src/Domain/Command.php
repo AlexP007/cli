@@ -98,14 +98,6 @@ class Command extends Domain
         $this->flags = $flags;
         $this->environment = new Environment($env);
 
-        if (count($flags) > 0) {
-            $this->useFlags = true;
-        }
-
-        if (count($env) > 0) {
-            $this->useEnv = true;
-        }
-
         $this->validate();
     }
 
@@ -142,12 +134,14 @@ class Command extends Domain
 
             // if with flags, we are not count this argument
             if ($class && $class->getName() === Flags::class) {
+                $this->useFlags = true;
                 $this->flagsPosition = $param->getPosition();
                 continue;
             }
 
             // if with env, we are not count last this argument
             if ($class && $class->getName() === Environment::class) {
+                $this->useEnv = true;
                 $this->envPosition = $param->getPosition();
                 continue;
             }
@@ -194,7 +188,7 @@ class Command extends Domain
     private function validateIncomingParameters()
     {
 
-        if ($this->useParams()) {
+        if ($this->useParams) {
             return;
         }
 
@@ -222,17 +216,19 @@ class Command extends Domain
     {
         $params = $this->cliRequest->getParams();
 
-        if ($this->useParams() ) {
-            $params = array(new Params($params));
+        if ($this->useParams) {
+            $params[$this->paramsPosition] = new Params($params);
         }
 
-        if ($this->useFlags() ) {
-            $params[] = $this->cliRequest->getFlags()->getFlagsObject();
+        if ($this->useFlags) {
+            $params[$this->flagsPosition] = $this->cliRequest->getFlags()->getFlagsObject();
         }
 
-        if ($this->useEnv() ) {
-            $params[] = $this->getEnv();
+        if ($this->useEnv) {
+            $params[$this->envPosition] = $this->getEnv();
         }
+
+        ksort($params, SORT_NUMERIC);
 
         return $params;
     }
@@ -267,29 +263,5 @@ class Command extends Domain
     public function getEnv(): Environment
     {
         return $this->environment;
-    }
-
-    /**
-     * @return bool
-     */
-    public function useFlags(): bool
-    {
-        return $this->useFlags;
-    }
-
-    /**
-     * @return bool
-     */
-    public function useParams(): bool
-    {
-        return $this->useParams;
-    }
-
-    /**
-     * @return bool
-     */
-    public function useEnv(): bool
-    {
-        return $this->useEnv;
     }
 }
