@@ -49,32 +49,9 @@ class CommandExecuteStrategy extends Strategy
 
     public function run()
     {
-        $this->command->prepareForInvocation($this->cliRequest);
-        $this->command->validateRequest();
-        $this->command->invoke($this->getParamsForInvocation());
-    }
-
-    /**
-     * Preparing parameters and flags for command invocation
-     *
-     * @return array
-     */
-    private function getParamsForInvocation(): array
-    {
-        $params = $this->cliRequest->getParams();
-
-        if ($this->command->useParams() ) {
-            $params = array(new Params($params));
-        }
-
-        if ($this->command->useFlags() ) {
-            $params[] = $this->cliRequest->getFlags()->getFlagsObject();
-        }
-
-        if ($this->command->useEnv() ) {
-            $params[] = $this->command->getEnv();
-        }
-
-        return $params;
+        return $this->command
+            ->prepareForInvocation($this->cliRequest)
+            ->validateRequest()
+            ->invoke();
     }
 }

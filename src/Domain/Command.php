@@ -122,6 +122,8 @@ class Command extends Domain
         $this->commandReflection = new CommandReflection($this);
         $this->cliRequest = $cliRequest;
         $this->scanParameters();
+
+        return $this;
     }
 
     private function scanParameters()
@@ -163,6 +165,8 @@ class Command extends Domain
     {
         $this->validateAllowedFlags();
         $this->validateIncomingParameters();
+
+        return $this;
     }
 
     /**
@@ -203,9 +207,34 @@ class Command extends Domain
         );
     }
 
-    public function invoke(array $params)
+    public function invoke()
     {
+        $params = $this->getParamsForInvocation();
         return $this->commandReflection->invoke($params);
+    }
+
+    /**
+     * Preparing parameters and flags for command invocation
+     *
+     * @return array
+     */
+    private function getParamsForInvocation(): array
+    {
+        $params = $this->cliRequest->getParams();
+
+        if ($this->useParams() ) {
+            $params = array(new Params($params));
+        }
+
+        if ($this->useFlags() ) {
+            $params[] = $this->cliRequest->getFlags()->getFlagsObject();
+        }
+
+        if ($this->useEnv() ) {
+            $params[] = $this->getEnv();
+        }
+
+        return $params;
     }
 
     /**
