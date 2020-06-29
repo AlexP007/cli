@@ -3,6 +3,8 @@
 
 namespace Cli\Domain;
 
+use Error;
+
 use Cli\Basic\Environment;
 
 /**
@@ -14,7 +16,7 @@ use Cli\Basic\Environment;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class Command
+class Command extends Domain
 {
     /**
      * @var string
@@ -72,6 +74,16 @@ class Command
         if (count($env) > 0) {
             $this->useEnv = true;
         }
+
+        $this->validate();
+    }
+
+    protected function validate()
+    {
+        self::ensureArgument(
+            strlen($this->name) !== 0,
+            "Command name should't be empty"
+        );
     }
 
     /**

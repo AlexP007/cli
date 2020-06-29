@@ -3,6 +3,8 @@
 
 namespace Cli\Domain;
 
+use Error;
+
 use Cli\Collection\FlagCollection;
 use Cli\Registry\Config;
 use Cli\Traits\ArgumentThrower;
@@ -16,10 +18,8 @@ use Cli\Traits\ArgumentThrower;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class CliRequest
+class CliRequest extends Domain
 {
-    use ArgumentThrower;
-
     /**
      * @var Config
      */
@@ -28,7 +28,12 @@ class CliRequest
     /**
      * @var string
      */
-    private $command;
+    private $firstArg;
+
+    /**
+     * @var string
+     */
+    private $commandName;
 
     /**
      * @var array
@@ -49,8 +54,7 @@ class CliRequest
     {
         $this->config = $config;
 
-        $firstArg = array_shift($args);
-        $this->validateFirstArgsKeyValue($firstArg);
+        $this->firstArg = array_shift($args);
 
         $commandName = array_shift($args);
         $this->setCommandName($commandName);
@@ -60,18 +64,8 @@ class CliRequest
 
         $this->setParams($args);
         $this->setFlags($flags);
-    }
 
-    /**
-     * Validating first value in args (GLOBALS)
-     * Should be the name of this script (configured when initialize)
-     *
-     * @param string $value
-     * @throws \Cli\Exception\ArgumentException
-     */
-    private function validateFirstArgsKeyValue(string $value)
-    {
-        self::ensureArgument($value === $this->config->getScriptName(), 'invalid input arguments');
+        $this->validate();
     }
 
     /**
@@ -79,7 +73,7 @@ class CliRequest
      */
     private function setCommandName(string $commandName)
     {
-        $this->command = $commandName;
+        $this->commandName = $commandName;
     }
 
     /**
@@ -100,12 +94,41 @@ class CliRequest
         $this->flags->loadArray($flags);
     }
 
+    protected function validate()
+    {
+        $this->validateFirstArgsKeyValue();
+        $this->validateCommandName();
+    }
+
+    /**
+     * Validating first value in args (GLOBALS)
+     * Should be the name of this script (configured when initialize)
+     *
+     * @param string $value
+     * @throws \Cli\Exception\ArgumentException
+     */
+    private function validateFirstArgsKeyValue()
+    {
+        self::ensureArgument(
+            $this->firstArg === $this->config->getScriptName(),
+            'invalid input arguments'
+        );
+    }
+
+    private function validateCommandName()
+    {
+        self::ensureArgument(
+            strlen($this->commandName) !== 0,
+            "Command name should't be empty"
+        );
+    }
+
     /**
      * @return string
      */
     public function getCommandName(): string
     {
-        return $this->command;
+        return $this->commandName;
     }
 
     /**

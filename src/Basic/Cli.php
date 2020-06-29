@@ -79,7 +79,7 @@ class Cli extends Singleton
      * Setting request, validating allowed command
      * Execute command and print output
      */
-    public final static function run()
+    public final static function run() // todo implement with strategy
     {
         try {
             $instance = self::getInstance();
@@ -118,7 +118,7 @@ class Cli extends Singleton
             $newCommand = new Command($command, $callback, $flags, $env);
             self::getInstance()->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
-           self::getInstance()->redOutput($e->getMessage() . "in Cli::handle command $command");
+           self::getInstance()->redOutput($e->getMessage() . " in Cli::handle command: {{$command}}");
            die();
         }
     }

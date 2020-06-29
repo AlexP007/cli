@@ -3,6 +3,8 @@
 
 namespace Cli\Domain;
 
+use Error;
+
 /**
  * Class Value
  * @package Cli/Domain
@@ -12,7 +14,7 @@ namespace Cli\Domain;
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */
-class Flag
+class Flag extends Domain
 {
     /**
      * @var string
@@ -32,6 +34,7 @@ class Flag
     public function __construct(string $flag)
     {
         $this->setFlag($flag);
+        $this->validate();
     }
 
     /**
@@ -48,6 +51,14 @@ class Flag
             $this->value = true;
         }
 
+    }
+
+    protected function validate()
+    {
+        self::ensureArgument(
+            strlen($this->flag) !== 0,
+            "Flag should't be empty"
+        );
     }
 
     /**
