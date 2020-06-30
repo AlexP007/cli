@@ -3,6 +3,8 @@
 
 namespace Cli\Basic;
 
+use Helper\TableBuilder;
+
 /**
  * Class Value
  * @package Cli/Basic
@@ -144,5 +146,13 @@ class Formatter
     public function printOut()
     {
         echo $this;
+    }
+
+    public static function table(array $data)
+    {
+        $tableBuilder = new TableBuilder($data);
+        $fmt = new Formatter($tableBuilder->build());
+
+        return $fmt;
     }
 }
