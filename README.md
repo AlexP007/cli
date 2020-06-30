@@ -32,7 +32,7 @@ For now time there is only one option you MUST pass:
 * script_file_name - name of the file
 
 there are also additional options:
-* list (list => 'Y') the list command will be available
+* list (enable_list => 'Y') the list command will be available
 
 ### Handling Commands
     Cli::handle(string  $command, callable  $callback, array  $flags = array(), array $env = array())
@@ -48,7 +48,7 @@ there are also additional options:
 * With flags could be passed they values like -f=value
 * If flag value is not passed it will be set to true
 * You cannot use flags that are not specified in $flags
-* The application monitors the number of parameters. 
+* The application tracks the number of parameters. 
 This means that you cannot pass parameters more or less than expected (Optional parameters are not taken)
 * No redeclaring available for one $command
 
@@ -60,7 +60,32 @@ This means that you cannot pass parameters more or less than expected (Optional 
 
     function(Params $params, Environment $env, Flags $flags) {}
  
-* Params, Flags or Environment will be passed into callback in order you specify the arguments
+* Params, Flags or Environment will be passed into callback in order you specify them in the arguments.
+This arguments are called "special" and they are optional
+* Non-special arguments must be specified before special:
+
+
+    function(param1, param2, Flags $flags) {}
+    
+* If you don't know exact number of arguments you could use Params, all arguments will be passed inside Params object:
+
+    
+    function(Params $params) {}
+    
+### Params 
+
+    Params::getParam(int $n) - where $n is position
+    Params::getArray(): array
+    
+### Flags
+
+    Flags::getFlag(string $flag)
+    Flags::getArray(): array
+    
+### Environment
+
+    Environment::getEnv(string $key)
+    Environment::getArray(): array
         
 ### Formatter
 
@@ -130,4 +155,4 @@ The output of command "php cli.php sayHi -f=flag pete lena"
     } 
    
 ### Predefined Commands
-If list is set to 'Y' you could list all commands to output by using 'list' command
+If enable_list is set to 'Y' you could list all commands to output by using 'list' command
