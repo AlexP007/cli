@@ -21,7 +21,7 @@ class Config extends Registry
     {
         return [
             'script_file_name',
-            'list',
+            'enable_list',
         ];
     }
 

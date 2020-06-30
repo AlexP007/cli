@@ -46,7 +46,7 @@ class Params
      * @param int $n
      * @return string
      */
-    public function getParam(int $n): string
+    public function getParam(int $n)
     {
         return $this->params[$n];
     }
