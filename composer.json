@@ -4,15 +4,16 @@
     "type": "library",
     "license": "MIT",
     "authors": [
-    {
-        "name": "AlexP007",
-        "email": "alex.p.panteleev@gmail.com"
-    }
-],
+        {
+            "name": "AlexP007",
+            "email": "alex.p.panteleev@gmail.com"
+        }
+    ],
     "require": {
-    "php": "^7.1"
-},
+        "php": "^7.1",
+        "ext-mbstring": "*"
+    },
     "autoload": {
-    "psr-4": {"Cli\\": "src/"}
-}
+        "psr-4": {"Cli\\": "src/"}
+    }
 }
