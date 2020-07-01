@@ -18,37 +18,46 @@ class TableBuilder
 {
     use ArgumentThrower;
 
-    private $headings;
-    private $data;
-    private $columns;
-    private $lines;
-    private $width;
+    const SYMBOL_CORNER = '+';
+    const SYMBOL_LINE_HORIZONTAL = '-';
+    const SYMBOL_LINE_VERTICAL = '|';
+    const SYMBOL_LINE_BREAK = "\n";
+    const SYMBOL_SPACE = " ";
 
+    const NUMBER_SPECIAL_SYMBOLS = 1;
+
+    private $data = [];
+    private $columns = [];
     private $columnsWidth = [];
 
     public function __construct(array $data)
     {
-        $this->headings = $data[0];
         $this->data = $data;
-        $this->columns = count($this->headings);
+        $this->validate();
+        $this->setColumnsWidth();
+    }
+
+    private function validate()
+    {
+        foreach ($this->data as $line) {
+            foreach ($line as $key => $column) {
+                self::ensureArgument(is_string($column), "columns should be strings");
+            }
+        }
     }
 
     public function build(): string
     {
-        $this->setColumnsWidth();
-        $this->width = array_sum($this->columnsWidth) + $this->columns;
+        $heading = $this->buildHeader(array_shift($this->data));
+        $body = '';
 
-        $heading = $this->buildLine($this->headings, 3);
-        $body = "";
-
-        unset($this->data[0]);
         foreach ($this->data as $column) {
-            $body .= $this->buildLine($column, 3);
+            $body .= $this->buildRow($column);
         }
 
-        $bottom = str_repeat("*", $this->width + 1);
+        $footer = $this->buildHorizontalLine();
 
-        return $heading . $body . $bottom;
+        return $heading . $body . $footer;
     }
 
     private function setColumnsWidth()
@@ -56,7 +65,6 @@ class TableBuilder
         $result = [];
         foreach ($this->data as $line) {
             foreach ($line as $key => $column) {
-                self::ensureArgument(is_string($column), "columns should be strings"); // todo validate method
                 $len = strlen($column) + 2;
                 if ($len > $result[$key]) {
                     $result[$key] = $len;
@@ -67,23 +75,42 @@ class TableBuilder
         $this->columnsWidth = $result;
     }
 
-    private function buildLine(array $columns, int $height): string
+    private function buildHeader(array $columns): string
     {
-        $line = str_repeat("*", $this->width + 1) . "\n";
+        $header = $this->buildHorizontalLine();
+        $header .= $this->buildRow($columns);
+        $header .= $this->buildHorizontalLine();
 
-        for($i = 0; $i < $height; ++$i) {
-            foreach ($columns as $num => $column) {
-                if ($i !== 1) {
-                    $line .= "*";
-                    $line .= str_repeat(" ", $this->columnsWidth[$num]);
-                } else {
-                    $line .= "* ";
-                    $line .= "$column ";
-                    $line .= str_repeat(" ", $this->columnsWidth[$num] - 2 - strlen($column));
-                }
-            }
-            $line .= "*\n";
+        return $header;
+    }
+
+    private function buildRow(array $columns): string
+    {
+        $row = '';
+        foreach ($columns as $num => $column) {
+            $row .= self::SYMBOL_LINE_VERTICAL . self::SYMBOL_SPACE;
+            $row .= $column;
+            $row .= str_repeat(
+                self::SYMBOL_SPACE,
+                $this->columnsWidth[$num] - self::NUMBER_SPECIAL_SYMBOLS - mb_strlen($column)
+            );
         }
+        $row .= self::SYMBOL_LINE_VERTICAL . self::SYMBOL_LINE_BREAK;
+
+        return $row;
+    }
+
+    private function buildHorizontalLine(): string
+    {
+        $line = '';
+        foreach ($this->columnsWidth as $columnWidth) {
+            $line .= self::SYMBOL_CORNER;
+            $line .= str_repeat(
+                self::SYMBOL_LINE_HORIZONTAL,
+                $columnWidth
+            );
+        }
+        $line .= self::SYMBOL_CORNER . self::SYMBOL_LINE_BREAK;
 
         return $line;
     }
