@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Helper;
+namespace Cli\Helper;
 
 use Cli\Traits\ArgumentThrower;
 

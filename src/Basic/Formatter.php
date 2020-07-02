@@ -3,7 +3,8 @@
 
 namespace Cli\Basic;
 
-use Helper\TableBuilder;
+use Cli\Helper\TableBuilder;
+use Cli\Traits\ArgumentThrower;
 
 /**
  * Class Value
@@ -16,6 +17,8 @@ use Helper\TableBuilder;
  */
 class Formatter
 {
+    use ArgumentThrower;
+
     const COLOR_RED = 'red';
     const COLOR_BLUE = 'blue';
     const COLOR_YELLOW = 'yellow';
@@ -36,9 +39,6 @@ class Formatter
      */
     public function __construct($value)
     {
-        if (is_array($value) ) {
-            $value = json_encode($value, JSON_PRETTY_PRINT);
-        }
         $this->value = $value;
     }
 
@@ -49,6 +49,9 @@ class Formatter
      */
     public function __toString(): string
     {
+        if (is_array($this->value) ) {
+            $this->value = json_encode($this->value, JSON_PRETTY_PRINT);
+        }
         $this->makeColored();
 
         return $this->value;
@@ -148,11 +151,15 @@ class Formatter
         echo $this;
     }
 
-    public static function table(array $data)
+    public function asTable()
     {
-        $tableBuilder = new TableBuilder($data);
-        $fmt = new Formatter($tableBuilder->build());
+        self::ensureArgument(
+            is_array($this->value),
+            "formatter value should be array to prepare table output"
+        );
+        $tableBuilder = new TableBuilder($this->value);
+        $this->value = $tableBuilder->build();
 
-        return $fmt;
+        return $this;
     }
 }

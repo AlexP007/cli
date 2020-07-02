@@ -3,13 +3,11 @@
 
 namespace Cli\Command;
 
-use ReflectionFunction;
-use ReflectionMethod;
-
 use Cli\Basic\Flags;
 use Cli\Basic\Params;
 use Cli\Basic\Environment;
 use Cli\Basic\Formatter;
+use Cli\Reflections\CommandReflection;
 
 /**
  * Class Value
@@ -32,15 +30,11 @@ class ListCommand
     public static function run(Environment $env)
     {
         $handlers = $env->getEnv('handlers')->asArray();
-        $result = [];
+        $header = ['Command', 'Params', 'Flags'];
+        $body = [];
 
         foreach ($handlers as $command) {
-            $callable = $command->getCallable();
-            if (is_array($callable) ) {
-                $commandReflection = new ReflectionMethod($callable[0], $callable[1]);
-            } else {
-                $commandReflection = new ReflectionFunction($callable);
-            }
+            $commandReflection = new CommandReflection($command);
             $parameters = [];
 
             foreach ($commandReflection->getParameters() as $param) {
@@ -50,37 +44,29 @@ class ListCommand
                 if ($class && $class->getName() === Params::class) {
                     continue;
                 }
-
                 // if with flags, we are not count this argument
                 if ($class && $class->getName() === Flags::class) {
                     continue;
                 }
-
                 // if with env, we are not count last this argument
                 if ($class && $class->getName() === Environment::class) {
                     continue;
                 }
-
                 $parameters[] = $param->getName();
             }
-
-            $result[] = [$command->getName(), $parameters, $command->getFlags()];
+            $body[] = [
+                $command->getName(),
+                join(', ', $parameters),
+                join(', ', $command->getFlags()),
+            ];
         }
 
-        usort($result, function ($a, $b) {
+        usort($body, function ($a, $b) {
             return $a[0] > $b[0];
         });
 
+        $output = array_merge([$header], $body);
 
-        // prepare for output
-        $output = '';
-
-        foreach ($result as $i) {
-            $params = join(', ' ,$i[1]);
-            $flags = join(', ' ,$i[2]);
-            $output .= $i[0] . ": " . "params: [$params] ; flags: [$flags] \n";
-        }
-
-        return (new Formatter($output))->yellow();
+        return (new Formatter($output))->asTable()->yellow();
     }
 }
