@@ -51,21 +51,22 @@ class Cli extends Singleton
      */
     public final static function initialize(array $config)
     {
+        $instance = self::getInstance();
         try {
             // checking the correct SAPI interface
             if (PHP_SAPI != self::CLI_SAPI_NAME) {
-                throw new InterfaceException("use this interface only in cli mode");
+                die("use this interface only in cli mode");
             }
 
             // disable Notice
             error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
             // initialize strategy
-            $initializeStrategy = new CliInitializeStrategy(self::getInstance(), $config);
+            $initializeStrategy = new CliInitializeStrategy($instance, $config);
             $initializeStrategy->run();
 
         } catch (Exception $e) {
-            self::getInstance()->redOutput($e->getMessage() );
+            $instance->config->isEnableExceptions() and $instance->redOutput($e->getMessage());
             die();
         }
     }
@@ -75,17 +76,17 @@ class Cli extends Singleton
      * Setting request, validating allowed command
      * Execute command and print output
      */
-    public final static function run() // todo implement with strategy
+    public final static function run()
     {
+        $instance = self::getInstance();
         try {
-            $instance = self::getInstance();
             $cliRequest = new CliRequest($GLOBALS['argv'], $instance->config);
             $handlers = $instance->handlers;
             // run strategy
             $runStrategy = new CliRunStrategy($instance, $cliRequest, $handlers);
             $instance->printOut($runStrategy->run());
         } catch (Exception $e) {
-            self::getInstance()->redOutput($e->getMessage() );
+            $instance->config->isEnableExceptions() and $instance->redOutput($e->getMessage() );
             die();
         }
     }
@@ -103,11 +104,13 @@ class Cli extends Singleton
      */
     public final static function handle(string $command, callable $callback, array $flags = [], array $env = [])
     {
+        $instance = self::getInstance();
         try {
             $newCommand = new Command($command, $callback, $flags, $env);
-            self::getInstance()->handlers->$command = $newCommand;
+            $instance->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
-           self::getInstance()->redOutput($e->getMessage() . " in Cli::handle command: {{$command}}");
+            $msg = $e->getMessage() . " in Cli::handle command: {{$command}}";
+            $instance->config->isEnableExceptions() and $instance->redOutput($msg);
            die();
         }
     }

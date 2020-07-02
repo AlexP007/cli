@@ -14,6 +14,8 @@ namespace Cli\Registry;
  */
 class Config extends Registry
 {
+    const VALUE_ON = "on";
+
     /**
      * @return array
      */
@@ -22,6 +24,7 @@ class Config extends Registry
         return [
             'script_file_name',
             'enable_list',
+            'enable_exceptions',
         ];
     }
 
@@ -33,11 +36,18 @@ class Config extends Registry
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getScriptName(): string
     {
         return $this->script_file_name;
+    }
+
+    public function isEnableList(): string
+    {
+        return $this->enable_list === self::VALUE_ON;
+    }
+
+    public function isEnableExceptions(): string
+    {
+        return $this->enable_exceptions === self::VALUE_ON;
     }
 }

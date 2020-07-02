@@ -56,9 +56,7 @@ class CliInitializeStrategy extends Strategy
             throw new Exception($e->getMessage() . ' in Cli::initialize');
         }
 
-        if ($this->config->enable_list === 'Y') {
-            $this->setListCommand();
-        }
+        $this->config->isEnableList() and $this->setListCommand();
     }
 
     private function setConfig()
