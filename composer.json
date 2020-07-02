@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": "^7.1",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {"Cli\\": "src/"}
