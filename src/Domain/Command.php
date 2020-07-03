@@ -91,12 +91,12 @@ class Command extends Domain
      * @param callable $callable
      * @param array $flags
      */
-    public function __construct(string $name, callable $callable, array $flags, array $env)
+    public function __construct(string $name, callable $callable, array $flags, Environment $env)
     {
         $this->name = $name;
         $this->callable = $callable;
         $this->flags = $flags;
-        $this->environment = new Environment($env);
+        $this->environment = $env;
 
         $this->validate();
     }

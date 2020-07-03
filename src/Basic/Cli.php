@@ -106,7 +106,7 @@ class Cli extends Singleton
     {
         $instance = self::getInstance();
         try {
-            $newCommand = new Command($command, $callback, $flags, $env);
+            $newCommand = new Command($command, $callback, $flags, new Environment($env));
             $instance->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
             $msg = $e->getMessage() . " in Cli::handle command: {{$command}}";
