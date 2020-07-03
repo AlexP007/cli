@@ -16,5 +16,5 @@ use Cli\Basic\Environment;
  */
 abstract class Command
 {
-    abstract public static function run(Environment $env);
+    abstract public static function handle(array $data);
 }

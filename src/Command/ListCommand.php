@@ -3,6 +3,7 @@
 
 namespace Cli\Command;
 
+use Cli\Basic\Cli;
 use Cli\Basic\Flags;
 use Cli\Basic\Params;
 use Cli\Basic\Environment;
@@ -20,9 +21,19 @@ use Cli\Reflections\CommandReflection;
  */
 class ListCommand extends Command
 {
+    public static function handle(array $data)
+    {
+        Cli::handle(
+            'list',
+            ['Cli\Command\ListCommand', 'run'],
+            [],
+            ['handlers' => $data['handlers']]
+        );
+    }
+
     /**
-     * Iterates thru all handled command
-     * and returned summary
+     * Iterates through all handled command
+     * and returned summary in table
      *
      * @param Environment $env
      * @throws \ReflectionException

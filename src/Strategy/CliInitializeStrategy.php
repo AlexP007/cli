@@ -3,11 +3,12 @@
 
 namespace Cli\Strategy;
 
-use Cli\Registry\HandlerRegistry;
 use Exception;
 
 use Cli\Basic\Cli;
+use Cli\Command\ListCommand;
 use Cli\Registry\Config;
+use Cli\Registry\HandlerRegistry;
 use Cli\Exception\RegistryException;
 
 /**
@@ -76,11 +77,6 @@ class CliInitializeStrategy extends Strategy
 
     private function setListCommand()
     {
-        Cli::handle(
-            'list',
-            ['Cli\Command\ListCommand', 'run'],
-            [],
-            ['handlers' => $this->handlers]
-        );
+        ListCommand::handle(['handlers' => $this->handlers]);
     }
 }
