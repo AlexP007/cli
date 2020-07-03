@@ -20,14 +20,6 @@ class CommandTest extends TestCase
      */
     private $simplyEnvironment;
 
-    /**
-     * @expectedException Cli\Exception\ArgumentException
-     */
-    public function testValidate()
-    {
-        $this->newSimpleCommand('');
-    }
-
     public function testConstruction()
     {
         $command = $this->newSimpleCommand(self::SIMPLE_COMMAND_NAME);
@@ -38,6 +30,14 @@ class CommandTest extends TestCase
         $this->assertEquals($this->simpleFunc, $command->getCallable());
         $this->assertEquals([], $command->getFlags());
         $this->assertEquals($this->simplyEnvironment, $command->getEnv());
+    }
+
+    /**
+     * @expectedException Cli\Exception\ArgumentException
+     */
+    public function testValidate()
+    {
+        $this->newSimpleCommand('');
     }
 
     private function newSimpleCommand($name)
