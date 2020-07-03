@@ -12,9 +12,22 @@ class CommandTest extends TestCase
 
     public function testConstruction(): array
     {
-        $data = $this->newSimpleCommand(self::SIMPLE_COMMAND_NAME);
+        $data = $this->newSimpleCommandData(self::SIMPLE_COMMAND_NAME);
         $this->assertInstanceOf(Command::class, $data['command']);
         return $data;
+    }
+
+    private function newSimpleCommandData($name)
+    {
+        $func = function($param1, $param2) {
+            return $param1 . $param2;
+        };
+        $env = new Environment([]);
+        return [
+            'command'     => new Command($name, $func, [], $env),
+            'function'    => $func,
+            'environment' => $env,
+        ];
     }
 
     /**
@@ -54,19 +67,6 @@ class CommandTest extends TestCase
      */
     public function testValidate()
     {
-        $this->newSimpleCommand('');
-    }
-
-    private function newSimpleCommand($name)
-    {
-        $func = function($param1, $param2) {
-            return $param1 . $param2;
-        };
-        $env = new Environment([]);
-        return [
-            'command'     => new Command($name, $func, [], $env),
-            'function'    => $func,
-            'environment' => $env,
-        ];
+        $this->newSimpleCommandData('');
     }
 }
