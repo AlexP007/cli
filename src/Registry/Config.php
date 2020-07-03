@@ -25,6 +25,7 @@ class Config extends Registry
             'script_file_name',
             'enable_list',
             'enable_exceptions',
+            'enable_find_command_package',
         ];
     }
 
@@ -49,5 +50,10 @@ class Config extends Registry
     public function isEnableExceptions(): string
     {
         return $this->enable_exceptions === self::VALUE_ON;
+    }
+
+    public function isEnableBasicFindCommandPackage()
+    {
+        return $this->enable_find_command_package === self::VALUE_ON;
     }
 }
