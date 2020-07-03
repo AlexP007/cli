@@ -3,6 +3,7 @@
 
 namespace Cli\Strategy;
 
+use Cli\Command\FindFileCommand;
 use Exception;
 
 use Cli\Basic\Cli;
@@ -58,6 +59,7 @@ class CliInitializeStrategy extends Strategy
         }
 
         $this->config->isEnableList() and $this->setListCommand();
+        $this->config->isEnableBasicFindCommandPackage() and $this->setFindCommandPackage();
     }
 
     private function setConfig()
@@ -78,5 +80,10 @@ class CliInitializeStrategy extends Strategy
     private function setListCommand()
     {
         ListCommand::handle(['handlers' => $this->handlers]);
+    }
+
+    public function setFindCommandPackage()
+    {
+        FindFileCommand::handle([]);
     }
 }
