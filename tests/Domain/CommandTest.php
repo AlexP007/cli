@@ -10,26 +10,43 @@ class CommandTest extends TestCase
 {
     const SIMPLE_COMMAND_NAME = 'command';
 
-    /**
-     * @var callable
-     */
-    private $simpleFunc;
-
-    /**
-     * @var Environment
-     */
-    private $simplyEnvironment;
-
-    public function testConstruction()
+    public function testConstruction(): array
     {
-        $command = $this->newSimpleCommand(self::SIMPLE_COMMAND_NAME);
-        $this->assertInstanceOf(Command::class, $command);
+        $data = $this->newSimpleCommand(self::SIMPLE_COMMAND_NAME);
+        $this->assertInstanceOf(Command::class, $data['command']);
+        return $data;
+    }
 
-        $this->assertEquals(self::SIMPLE_COMMAND_NAME, $command->getName());
-        $this->assertEquals($this->simpleFunc, $command->getCallable());
-        $this->assertEquals($this->simpleFunc, $command->getCallable());
-        $this->assertEquals([], $command->getFlags());
-        $this->assertEquals($this->simplyEnvironment, $command->getEnv());
+    /**
+     * @depends testConstruction
+     */
+    public function testCommandName(array $data)
+    {
+        $this->assertEquals(self::SIMPLE_COMMAND_NAME, $data['command']->getName());
+    }
+
+    /**
+     * @depends testConstruction
+     */
+    public function testCallable(array $data)
+    {
+        $this->assertEquals($data['function'], $data['command']->getCallable());
+    }
+
+    /**
+     * @depends testConstruction
+     */
+    public function testFlags(array $data)
+    {
+        $this->assertEquals([], $data['command']->getFlags());
+    }
+
+    /**
+     * @depends testConstruction
+     */
+    public function testEnvironment(array $data)
+    {
+        $this->assertEquals($data['environment'], $data['command']->getEnv());
     }
 
     /**
@@ -42,10 +59,14 @@ class CommandTest extends TestCase
 
     private function newSimpleCommand($name)
     {
-        $this->simpleFunc = function($param1, $param2) {
+        $func = function($param1, $param2) {
             return $param1 . $param2;
         };
-        $this->simplyEnvironment = new Environment([]);
-        return new Command($name, $this->simpleFunc, [], $this->simplyEnvironment);
+        $env = new Environment([]);
+        return [
+            'command'     => new Command($name, $func, [], $env),
+            'function'    => $func,
+            'environment' => $env,
+        ];
     }
 }
