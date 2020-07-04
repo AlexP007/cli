@@ -288,6 +288,22 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
 * Так же библиотека строго относится к кол-ву аргументов команды (см.выше в разделе "Создание комманд")
 * Так же в системе не может быть двух команд с одинаковым именем. Библиотека за этим внимательно следит =)
 
+### Специальные объекты
+#### Params 
+
+    Params::getParam(int $n) - where $n is position
+    Params::getArray(): array // all params
+    
+#### Flags
+
+    Flags::getFlag(string $flag)
+    Flags::getArray(): array // all flags
+    
+#### Environment
+
+    Environment::getEnv(string $key)
+    Environment::getArray(): array // all environment vars
+
 ### Конфигурация
 
 При инициализации приложения можно передавать настройки параметров конфигурации, вот пример использования всех настроек:
@@ -305,3 +321,125 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
 * enable_exceptions - включает исключения и пояснения от билиотеки (рекомендуется включать всегда)
 * enable_errors - включает ошибки (рекомендуется включать только при отладке)    
 * enable_find_command_package - подключает пакет встроенных команд поиска
+
+### Встроенные комманды
+* list (если 'enable_list' => 'on') позволяет использовать встроенную команду list, которая выводит список всех
+зарегистрированных в системе комманд и краткую информацию о них:
+
+
+    php cli.php list
+
+вернет:
+
+    +-------------+---------------+------------------+
+    | Command     | Params        | Flags            |
+    +-------------+---------------+------------------+
+    | bit         |               |                  |
+    | find:file   | path, pattern | -r               |
+    | find:inFile | path, pattern | -r, --extensions |
+    | list        |               |                  |
+    | sayHi       |               | --send           |
+    | table       |               |                  |
+    +-------------+---------------+------------------+
+
+* find:file [путь к директории поиска] [паттерн - регулярное выражение]
+-> поиск файлов в системе;
+можно использовать флаг "-r" для рекурсивного поиска в поддиректориях:
+
+
+    php cli.php find:file ./ "php"
+    
+найдет файлы c расширением php:
+
+    +--------------+----------------+
+    | Filename     | Filepath       |
+    +--------------+----------------+
+    | autoload.php | ./autoload.php |
+    | cli.php      | ./cli.php      |
+    +--------------+----------------+
+    
+* find:inFile [путь к директории поиска] [паттерн - регулярное выражение]
+-> поиск совпадений внутри файлов;
+можно использовать флаг "-r" для рекурсивного поиска в поддиректориях и
+флаг "--extensions" для указания точных расширений, через запятую (только для этих файлов будет произведен поиск):
+
+    
+    php cli.php find:inFile --extensions=php ./ "include"
+    
+вернет:
+
+    
+    +--------------------------------+------+----------+-----------+
+    | Match                          | Line | Filename | Filepath  |
+    +--------------------------------+------+----------+-----------+
+    | include_once "src/$class.php"; | 12   | cli.php  | ./cli.php |
+    +--------------------------------+------+----------+-----------+
+
+* для использования комманд пакета find нужно в конфигурации установить 'enable_find_command_package' => 'on'
+
+### Formatter
+
+Класс, который упрощает работу с выводом результата:
+
+    use Cli\Basic\Formatter;
+
+    
+Цвет вывод красный:
+
+    Formatter::red() : $this
+    
+Цвет вывода синий:
+
+    Formatter::blue() : $this
+    
+Цвет вывода красный:
+
+    Formatter::yellow() : $this
+    
+Табличное представление
+
+    Formatter::asTable(): $this
+    
+Перенос строки:
+
+    Formatter::line() : $this
+  
+Печатает в поток вывода:
+
+    Formatter::printOut()
+    
+Создание нового Formatter(можно передавать массив или строку):
+
+    new Formatter(array or string $data)
+    
+Специальные объекты (Params, Flags, Environment) можно передавать без обработки:
+
+    use Cli\Basic\Cli;
+    use Cli\Basic\Formatter;
+            
+    Cli::handle('bit', function(Params $params){
+        $fmt = new Formatter($params);
+        return $fmt->blue();
+    });
+    
+Пример табличного вывода:
+
+        use Cli\Basic\Cli;
+        use Cli\Basic\Formatter;
+        
+        Cli::handle('table', function() {
+            $data = [
+                ['command_1', 'params', 'flags'],
+                ['command_2', '[1,34,56,]', '[-f -r -d]'],
+                ['special_command', '[1,string,56,]', '[-f -r -d]'],
+            ];
+        
+            $fmt = new Formatter($data);
+            return $fmt->asTable()->red();
+        
+        });
+        
+## Успешной вам разработки!
+Я всегда открыт для любых вопросов и предложений (пишите, создавайте issue).
+
+Всем желающим контрибьютить - добро пожаловать!
