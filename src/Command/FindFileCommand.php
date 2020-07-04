@@ -24,11 +24,13 @@ class FindFileCommand extends Command
 {
     use ArgumentThrower;
 
+    const COMMAND_NAME = 'find:file';
+
     public static function handle(array $data)
     {
         Cli::handle(
-            'find:file',
-            ['Cli\Command\FindFileCommand', 'run'],
+            self::COMMAND_NAME,
+            [self::class, 'run'],
             ['-r'],
             []
         );
@@ -46,14 +48,14 @@ class FindFileCommand extends Command
      */
     public static function run($path, $pattern, Flags $flags)
     {
-        self::ensureArgument(is_string($path), 'file:find path should be string');
-        self::ensureArgument(is_dir($path), 'file:find path should be directory');
-        self::ensureArgument(is_string($pattern), 'file:find pattern should be string');
+        self::ensureArgument(is_string($path), self::COMMAND_NAME . 'path should be string');
+        self::ensureArgument(is_dir($path), self::COMMAND_NAME . 'path should be directory');
+        self::ensureArgument(is_string($pattern), self::COMMAND_NAME . 'pattern should be string');
 
         $realpath = realpath($path);
         $path = rtrim($path, '/'); // for future concatenations
 
-        self::ensureArgument($realpath !== false, 'file:find path should be a valid path');
+        self::ensureArgument($realpath !== false, self::COMMAND_NAME . 'path should be a valid path');
 
         $result = [['Filename', 'Filepath']];
 
@@ -70,7 +72,7 @@ class FindFileCommand extends Command
             $fmt = new Formatter($result);
             return $fmt->asTable()->yellow();
         } else {
-            $fmt = new Formatter('find nothing');
+            $fmt = new Formatter(self::COMMAND_NAME . ' -> find nothing');
             return $fmt->yellow();
         }
     }
