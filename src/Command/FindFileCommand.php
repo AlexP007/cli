@@ -58,8 +58,8 @@ class FindFileCommand extends Command
         $result = [['Filename', 'Filepath']];
 
         $it = Directory::getIterator($realpath, (bool) $flags->getFlag('-r'));
-
         $files = new RegexIterator($it, "/$pattern/", RegexIterator::MATCH);
+
         foreach ($files as $file) {
             $filepath = str_replace($realpath, '', $file->getPathName());
             $filepath = $path . '/' . ltrim($filepath, '/');
