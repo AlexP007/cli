@@ -1,8 +1,8 @@
 # PHP CLI APP
 
 documentation:
-* [English-version](##English)
-* [Russian-version](##Russian)
+* [English-version](#English)
+* [Russian-version](#Russian)
 
 ## English
 *simple and lightweight library for rapid creation php cli (command line) applications*
