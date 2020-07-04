@@ -4,6 +4,7 @@
 namespace Cli\Strategy;
 
 use Cli\Command\FindFileCommand;
+use Cli\Command\FindInFileCommand;
 use Exception;
 
 use Cli\Basic\Cli;
@@ -85,5 +86,6 @@ class CliInitializeStrategy extends Strategy
     public function setFindCommandPackage()
     {
         FindFileCommand::handle([]);
+        FindInFileCommand::handle([]);
     }
 }

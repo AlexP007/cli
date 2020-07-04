@@ -23,8 +23,9 @@ class Config extends Registry
     {
         return [
             'script_file_name',
-            'enable_list',
             'enable_exceptions',
+            'enable_errors',
+            'enable_list',
             'enable_find_command_package',
         ];
     }
@@ -42,14 +43,19 @@ class Config extends Registry
         return $this->script_file_name;
     }
 
-    public function isEnableList(): string
-    {
-        return $this->enable_list === self::VALUE_ON;
-    }
-
     public function isEnableExceptions(): string
     {
         return $this->enable_exceptions === self::VALUE_ON;
+    }
+
+    public function isEnableErrors(): string
+    {
+        return $this->enable_errors === self::VALUE_ON;
+    }
+
+    public function isEnableList(): string
+    {
+        return $this->enable_list === self::VALUE_ON;
     }
 
     public function isEnableBasicFindCommandPackage()

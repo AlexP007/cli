@@ -3,18 +3,17 @@
 
 namespace Cli\Basic;
 
-use Cli\Strategy\CliInitializeStrategy;
-use Cli\Strategy\CliRunStrategy;
+
 use Exception;
+use Error;
 
 use Cli\Domain\Command;
 use Cli\Domain\CliRequest;
-use Cli\Exception\ArgumentException;
-use Cli\Exception\CommandException;
-use Cli\Exception\InterfaceException;
 use Cli\Registry\Config;
 use Cli\Registry\HandlerRegistry;
-use Cli\Strategy\CommandExecuteStrategy;
+use Cli\Strategy\CliInitializeStrategy;
+use Cli\Strategy\CliRunStrategy;
+use Cli\Exception\ArgumentException;
 
 /**
  * Class Cli
@@ -68,6 +67,11 @@ class Cli extends Singleton
         } catch (Exception $e) {
             $instance->config->isEnableExceptions() and $instance->redOutput($e->getMessage());
             die();
+        } catch (Error $e) {
+            if ($instance->config->isEnableErrors()) {
+                throw new Error();
+            }
+            die();
         }
     }
 
@@ -87,6 +91,11 @@ class Cli extends Singleton
             $instance->printOut($runStrategy->run());
         } catch (Exception $e) {
             $instance->config->isEnableExceptions() and $instance->redOutput($e->getMessage() );
+            die();
+        } catch (Error $e) {
+            if ($instance->config->isEnableErrors()) {
+                throw new Error();
+            }
             die();
         }
     }
@@ -112,6 +121,11 @@ class Cli extends Singleton
             $msg = $e->getMessage() . " in Cli::handle command: {{$command}}";
             $instance->config->isEnableExceptions() and $instance->redOutput($msg);
            die();
+        } catch (Error $e) {
+            if ($instance->config->isEnableErrors()) {
+                throw new Error();
+            }
+            die();
         }
     }
 
