@@ -3,13 +3,14 @@
 
 namespace Cli\Command;
 
-use Cli\Basic\Formatter;
 use RegexIterator;
+use DirectoryIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 use Cli\Basic\Cli;
 use Cli\Basic\Flags;
+use Cli\Basic\Formatter;
 use Cli\Traits\ArgumentThrower;
 
 /**
@@ -30,11 +31,21 @@ class FindFileCommand extends Command
         Cli::handle(
             'find:file',
             ['Cli\Command\FindFileCommand', 'run'],
-            ['-r', '-e', '-re'],
+            ['-r'],
             []
         );
     }
 
+    /**
+     * Iterates over $path and searches for files matches pegExp $pattern.
+     * If flag -r is specified then iterates recursively
+     *
+     * @param $path
+     * @param $pattern
+     * @param Flags $flags
+     * @return Formatter
+     * @throws \Cli\Exception\ArgumentException
+     */
     public static function run($path, $pattern, Flags $flags)
     {
         self::ensureArgument(is_string($path), 'file:find path should be string');
@@ -45,7 +56,10 @@ class FindFileCommand extends Command
 
         $result = [['Filename', 'Filepath']];
 
-        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+        $it = $flags->getFlag('-r')
+            ? new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path))
+            : new DirectoryIterator($path);
+
         $files = new RegexIterator($it, "/$pattern/", RegexIterator::MATCH);
         foreach ($files as $file) {
             $result[] = [
@@ -54,7 +68,12 @@ class FindFileCommand extends Command
             ];
         }
 
-        $fmt = new Formatter($result);
-        return $fmt->asTable()->yellow();
+        if (count($result) > 1) {
+            $fmt = new Formatter($result);
+            return $fmt->asTable()->yellow();
+        } else {
+            $fmt = new Formatter('find nothing');
+            return $fmt->yellow();
+        }
     }
 }
