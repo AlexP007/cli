@@ -49,7 +49,8 @@ class FindFileCommand extends Command
     public static function run($path, $pattern, Flags $flags)
     {
         self::ensureArgument(is_string($path), 'file:find path should be string');
-        self::ensureArgument(is_string($path), 'file:find pattern should be string');
+        self::ensureArgument(is_dir($path), 'file:find path should be directory');
+        self::ensureArgument(is_string($pattern), 'file:find pattern should be string');
 
         $realpath = realpath($path);
         $path = rtrim($path, '/'); // for future concatenations
