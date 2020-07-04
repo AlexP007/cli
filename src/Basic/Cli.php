@@ -69,7 +69,7 @@ class Cli extends Singleton
             die();
         } catch (Error $e) {
             if ($instance->config->isEnableErrors()) {
-                throw new Error();
+                throw new Error($e->getMessage());
             }
             die();
         }
@@ -94,7 +94,7 @@ class Cli extends Singleton
             die();
         } catch (Error $e) {
             if ($instance->config->isEnableErrors()) {
-                throw new Error();
+                throw new Error($e->getMessage());
             }
             die();
         }
@@ -123,7 +123,7 @@ class Cli extends Singleton
            die();
         } catch (Error $e) {
             if ($instance->config->isEnableErrors()) {
-                throw new Error();
+                throw new Error($e->getMessage());
             }
             die();
         }
