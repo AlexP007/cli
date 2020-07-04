@@ -40,7 +40,7 @@ class FindFileCommand extends Command
      * Iterates over $path and searches for files matches pegExp $pattern.
      * If flag -r is specified then iterates recursively
      *
-     * @param $path
+     * @param $realpath
      * @param $pattern
      * @param Flags $flags
      * @return Formatter
@@ -49,23 +49,24 @@ class FindFileCommand extends Command
     public static function run($path, $pattern, Flags $flags)
     {
         self::ensureArgument(is_string($path), 'file:find path should be string');
-        self::ensureArgument(is_string($pattern), 'file:find pattern should be string');
+        self::ensureArgument(is_string($path), 'file:find pattern should be string');
 
-        $path = realpath($path);
-        self::ensureArgument($path !== false, 'file:find path should be a valid path');
+        $realpath = realpath($path);
+        $path = rtrim($path, '/'); // for future concatenations
+
+        self::ensureArgument($realpath !== false, 'file:find path should be a valid path');
 
         $result = [['Filename', 'Filepath']];
 
         $it = $flags->getFlag('-r')
-            ? new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path))
-            : new DirectoryIterator($path);
+            ? new RecursiveIteratorIterator(new RecursiveDirectoryIterator($realpath))
+            : new DirectoryIterator($realpath);
 
         $files = new RegexIterator($it, "/$pattern/", RegexIterator::MATCH);
         foreach ($files as $file) {
-            $result[] = [
-                $file->getFileName(),
-                str_replace($path, '', $file->getPathName())
-            ];
+            $filepath = str_replace($realpath, '', $file->getPathName());
+            $filepath = $path . '/' . ltrim($filepath, '/');
+            $result[] = [$file->getFileName(), $filepath];
         }
 
         if (count($result) > 1) {
