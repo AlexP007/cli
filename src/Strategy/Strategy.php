@@ -4,7 +4,7 @@
 namespace Cli\Strategy;
 
 /**
- * Class Value
+ * Class Strategy
  * @package Cli/Strategy
  * @license MIT
  *

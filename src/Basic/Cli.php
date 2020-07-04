@@ -17,7 +17,7 @@ use Cli\Registry\HandlerRegistry;
 use Cli\Strategy\CommandExecuteStrategy;
 
 /**
- * Class Value
+ * Class Cli
  * @package Cli/Basic
  * @license MIT
  *

@@ -6,7 +6,7 @@ namespace Cli\Exception;
 use Exception;
 
 /**
- * Class Value
+ * Class CommandException
  * @package Cli/Exception
  * @license MIT
  *

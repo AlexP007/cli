@@ -9,7 +9,7 @@ use Cli\Basic\Environment;
 use Cli\Reflections\CommandReflection;
 
 /**
- * Class Value
+ * Class Command
  * @package Cli/Domain
  * @license MIT
  *

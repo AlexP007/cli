@@ -4,7 +4,7 @@
 namespace Cli\Domain;
 
 /**
- * Class Value
+ * Class Flag
  * @package Cli/Domain
  * @license MIT
  *

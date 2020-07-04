@@ -6,7 +6,7 @@ namespace Cli\Collection;
 use Cli\Domain\Command;
 
 /**
- * Class Value
+ * Class CommandCollection
  * @package Cli/Collection
  * @license MIT
  *

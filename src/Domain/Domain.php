@@ -7,7 +7,7 @@ namespace Cli\Domain;
 use Cli\Traits\ArgumentThrower;
 
 /**
- * Class Value
+ * Class Domain
  * @package Cli/Domain
  * @license MIT
  *

@@ -6,7 +6,7 @@ namespace Cli\Helper;
 use Cli\Traits\ArgumentThrower;
 
 /**
- * Class Value
+ * Class TableBuilder
  * @package Cli/Helper
  * @license MIT
  *

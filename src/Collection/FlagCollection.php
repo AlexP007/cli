@@ -7,7 +7,7 @@ use Cli\Basic\Flags;
 use Cli\Domain\Flag;
 
 /**
- * Class Value
+ * Class FlagCollection
  * @package Cli/Collection
  * @license MIT
  *

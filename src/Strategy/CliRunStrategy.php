@@ -9,7 +9,7 @@ use Cli\Registry\HandlerRegistry;
 use Cli\Exception\CommandException;
 
 /**
- * Class Value
+ * Class CliRunStrategy
  * @package Cli/Strategy
  * @license MIT
  *

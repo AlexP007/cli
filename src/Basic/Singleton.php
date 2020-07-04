@@ -6,11 +6,11 @@ namespace Cli\Basic;
 use Exception;
 
 /**
- * Class Value
+ * Class Singleton
  * @package Cli/Basic
  * @license MIT
  *
- * @author AlexP007kK
+ * @author AlexP007
  * @email alex.p.panteleev@gmail.com
  * @link https://github.com/AlexP007/cli
  */

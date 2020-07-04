@@ -4,7 +4,7 @@
 namespace Cli\Collection;
 
 /**
- * Class Value
+ * Class StringCollection
  * @package Cli/Collection
  * @license MIT
  *

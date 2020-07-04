@@ -10,7 +10,7 @@ use ReflectionParameter;
 use Cli\Domain\Command;
 
 /**
- * Class Value
+ * Class CommandReflection
  * @package Cli/Reflections
  * @license MIT
  *

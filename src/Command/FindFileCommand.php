@@ -14,7 +14,7 @@ use Cli\Basic\Formatter;
 use Cli\Traits\ArgumentThrower;
 
 /**
- * Class Value
+ * Class FindFileCommand
  * @package Cli/Command
  * @license MIT
  *

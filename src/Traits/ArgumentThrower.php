@@ -6,7 +6,7 @@ namespace Cli\Traits;
 use Cli\Exception\ArgumentException;
 
 /**
- * Class Value
+ * Class ArgumentThrower
  * @package Trait/Traits
  * @license MIT
  *

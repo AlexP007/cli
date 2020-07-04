@@ -4,7 +4,7 @@
 namespace Cli\Registry;
 
 /**
- * Class Value
+ * Class Config
  * @package Cli/Registry
  * @license MIT
  *

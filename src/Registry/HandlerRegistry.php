@@ -6,7 +6,7 @@ namespace Cli\Registry;
 use Cli\Collection\CommandCollection;
 
 /**
- * Class Value
+ * Class HandlerRegistry
  * @package Cli/Registry
  * @license MIT
  *

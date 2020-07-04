@@ -12,7 +12,7 @@ use Cli\Reflections\CommandReflection;
 use Cli\Traits\ArgumentThrower;
 
 /**
- * Class Value
+ * Class CommandExecuteStrategy
  * @package Cli/Strategy
  * @license MIT
  *

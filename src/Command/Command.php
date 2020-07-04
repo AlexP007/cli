@@ -3,10 +3,8 @@
 
 namespace Cli\Command;
 
-use Cli\Basic\Environment;
-
 /**
- * Class Value
+ * Class Command
  * @package Cli/Command
  * @license MIT
  *

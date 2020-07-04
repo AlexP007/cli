@@ -7,7 +7,7 @@ use Cli\Collection\FlagCollection;
 use Cli\Registry\Config;
 
 /**
- * Class Value
+ * Class CliRequest
  * @package Cli/Domain
  * @license MIT
  *

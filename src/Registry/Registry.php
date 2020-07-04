@@ -9,7 +9,7 @@ use Cli\Collection\StringCollection;
 use Cli\Exception\RegistryException;
 
 /**
- * Class Value
+ * Class Registry
  * @package Cli/Registry
  * @license MIT
  *

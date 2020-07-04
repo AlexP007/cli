@@ -11,7 +11,7 @@ use Cli\Basic\Formatter;
 use Cli\Reflections\CommandReflection;
 
 /**
- * Class Value
+ * Class ListCommand
  * @package Cli/Command
  * @license MIT
  *

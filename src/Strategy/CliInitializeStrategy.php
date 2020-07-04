@@ -13,7 +13,7 @@ use Cli\Registry\HandlerRegistry;
 use Cli\Exception\RegistryException;
 
 /**
- * Class Value
+ * Class CliInitializeStrategy
  * @package Cli/Strategy
  * @license MIT
  *

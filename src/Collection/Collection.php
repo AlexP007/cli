@@ -6,7 +6,7 @@ namespace Cli\Collection;
 use Cli\Traits\ArgumentThrower;
 
 /**
- * Class Value
+ * Class Collection
  * @package Cli/Collection
  * @license MIT
  *
