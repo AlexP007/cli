@@ -1,4 +1,10 @@
 # PHP CLI APP
+
+documentation:
+* [English-version](##English)
+* [Russian-version](##Russian)
+
+## English
 *simple and lightweight library for rapid creation php cli (command line) applications*
 
 ### Installation 
@@ -156,3 +162,5 @@ The output of command "php cli.php sayHi -f=flag pete lena"
    
 ### Predefined Commands
 If enable_list is set to 'Y' you could list all commands to output by using 'list' command
+
+## Russian
