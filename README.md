@@ -374,7 +374,7 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
     | include_once "src/$class.php"; | 12   | cli.php  | ./cli.php |
     +--------------------------------+------+----------+-----------+
 
-* для использования команд пакета find нужно в конфигурации установить 'enable_find_command_package' => 'on'
+Для использования команд пакета find нужно в конфигурации установить 'enable_find_command_package' => 'on'
 
 ### Formatter
 
@@ -395,7 +395,7 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
 
     Formatter::yellow() : $this
     
-Табличное представление
+Табличное представление:
 
     Formatter::asTable(): $this
     
