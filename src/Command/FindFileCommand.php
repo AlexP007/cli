@@ -4,13 +4,11 @@
 namespace Cli\Command;
 
 use RegexIterator;
-use DirectoryIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 
 use Cli\Basic\Cli;
 use Cli\Basic\Flags;
 use Cli\Basic\Formatter;
+use Cli\Helper\Directory;
 use Cli\Traits\ArgumentThrower;
 
 /**
@@ -59,9 +57,7 @@ class FindFileCommand extends Command
 
         $result = [['Filename', 'Filepath']];
 
-        $it = $flags->getFlag('-r')
-            ? new RecursiveIteratorIterator(new RecursiveDirectoryIterator($realpath))
-            : new DirectoryIterator($realpath);
+        $it = Directory::getIterator($realpath, (bool) $flags->getFlag('-r'));
 
         $files = new RegexIterator($it, "/$pattern/", RegexIterator::MATCH);
         foreach ($files as $file) {
