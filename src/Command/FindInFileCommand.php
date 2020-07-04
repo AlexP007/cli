@@ -29,11 +29,23 @@ class FindInFileCommand extends Command
         Cli::handle(
             self::COMMAND_NAME,
             [self::class, 'run'],
-            ['-r', '-a', '-ra'],
+            ['-r', '--extensions'],
             []
         );
     }
 
+    /**
+     * Iterates over $path and searches for file content matches pegExp $pattern.
+     * If flag -r is specified then iterates recursively
+     * If --extensions specified then only files with this extensions will be iterated
+     * You should specified extensions with comma delimiter like (--extensions=php,xml)
+     *
+     * @param $path
+     * @param $pattern
+     * @param Flags $flags
+     * @return Formatter
+     * @throws \Cli\Exception\ArgumentException
+     */
     public static function run($path, $pattern, Flags $flags)
     {
         self::ensureArgument(is_string($path), self::COMMAND_NAME . 'path should be string');
@@ -43,6 +55,14 @@ class FindInFileCommand extends Command
         $realpath = realpath($path);
         $path = rtrim($path, '/'); // for future concatenations
 
+        $extensions = $flags->getFlag('--extensions');
+        if (strlen($extensions) > 0 && strstr($extensions, ',')) {
+            $extensions = str_replace(' ', '', $extensions);
+            $extensions = explode(',', $extensions);
+            $extensions = implode('$|', $extensions);
+        }
+        $extensions = "/$extensions$/";
+
         self::ensureArgument($realpath !== false, self::COMMAND_NAME . 'path should be a valid path');
 
         $result = [['Match', 'Line', 'Filename', 'Filepath']];
@@ -51,6 +71,9 @@ class FindInFileCommand extends Command
 
         foreach ($files as $file) {
             if ($file->isFile()) {
+                if (strlen($extensions) > 0 && !preg_match($extensions, $file->getFilename())) {
+                    continue;
+                }
                 $filePath = $file->getRealPath();
                 $fileArray = file($filePath, FILE_IGNORE_NEW_LINES);
                 $match = preg_grep("/$pattern/", $fileArray);
