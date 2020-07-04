@@ -164,7 +164,7 @@ The output of command "php cli.php sayHi -f=flag pete lena"
 If enable_list is set to 'Y' you could list all commands to output by using 'list' command
 
 ## Russian
-Простая и легкая библиотека для скоростной разработки приложений командной строки на php 
+Простая и легкая библиотека для скоростной разработки приложений командной строки на php.
 
 Версия php >= 7.1
 
@@ -177,6 +177,8 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
     require __DIR__ . "/../vendor/autoload.php"; // путь до автозагрузчика
     
 далее
+
+    use Cli\Basic\Cli;
     
     Cli::initialize([
         'script_file_name' => 'cli.php' // название файла
@@ -213,6 +215,7 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
 
 Расширенное создание команды может выглядеть так:
 
+    use Cli\Basic\Cli;
     use Cli\Basic\Flags;
     use Cli\Basic\Environment;
 
@@ -223,7 +226,7 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
         return "hi " . $name;
     }, ['--send'], ['email' => 'name@mail.ru']);
     
-Если вы хотите использовать Flags и Environment, то указание типа данных в агрументах обязательно
+Если вы хотите использовать Flags и Environment, то указание типа данных в агрументах обязательно.
 
 Данная библиотека строго относится к аргумента комманд, что значит команду ожидающую один аргумент, нельзя будет вызвать без него.
 Однако, если аргумент не обязательный, то при создании функции следует указать значение по умолчанию для аргумента null, например:
@@ -233,7 +236,8 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
     });
     
 Если вы ожидаете переменное число аргументов, то предлается использовать объект Params:
-
+    
+    use Cli\Basic\Cli;
     use Cli\Basic\Params;
     
     Cli::handle('bit', function(Params $params){
@@ -243,6 +247,7 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
     
 При использовании специальных объектов (Params, Flags, Environment) в качестве аргументов, их порядок не имеет значений:
 
+    use Cli\Basic\Cli;
     use Cli\Basic\Flags;
     use Cli\Basic\Params;
     use Cli\Basic\Environment;
@@ -250,3 +255,53 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
     Cli::handle('sayHi', function (Flags $flags, Environment $env, Params $params) { // callable
        return $params;
     }, ['--send'], ['email' => 'name@mail.ru']);
+    
+Любые обычные аргументы следует указывать до специальных.
+    
+### Основные правила
+* При вызове команды из командой строки, флаги должны быть переданы до аргументов например: 
+
+
+    php cli.php sayHi -f pete
+       
+* Вы можете использовать флаги с префиксами  "-" или "--"
+* Вместе с флагами можно передавать их значение через "="
+
+
+    php cli.php sayHi --mail=pete@mail.ru pete
+
+* Если флаг используется без значения, то ему будет установлено значение по умолчанию в объекте Flags в true
+
+
+    php cli.php sayHi -f pete
+    
+    -f будет равно true
+
+* Библиотека не позволит использовать флаги, которые не были указаны при создании комманды, например для следующей
+команды, нельзя будет использовать флаг "-r":
+
+
+     Cli::handle('sayHi', function ($name) {
+            return "hi " . $name; 
+        }, [-f]);
+
+* Так же библиотека строго относится к кол-ву аргументов команды (см.выше в разделе "Создание комманд")
+* Так же в системе не может быть двух команд с одинаковым именем. Библиотека за этим внимательно следит =)
+
+### Конфигурация
+
+При инициализации приложения можно передавать настройки параметров конфигурации, вот пример использования всех настроек:
+
+    Cli::initialize([
+        'script_file_name'            => 'cli.php',
+        'enable_list'                 => 'on',
+        'enable_exceptions'           => 'on',
+        'enable_errors'               => 'on',
+        'enable_find_command_package' => 'on',
+    ]);
+    
+* script_file_name - имя файла в котором подключается билиотека - **обязательная настройка**
+* enable_list - разрешает использования листинга (встроенная команда, выводящая список всех доступных комманд)
+* enable_exceptions - включает исключения и пояснения от билиотеки (рекомендуется включать всегда)
+* enable_errors - включает ошибки (рекомендуется включать только при отладке)    
+* enable_find_command_package - подключает пакет встроенных команд поиска
