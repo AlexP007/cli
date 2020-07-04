@@ -5,164 +5,171 @@ documentation:
 * [Russian-version](#Russian)
 
 ## English
-*simple and lightweight library for rapid creation php cli (command line) applications*
+Simple and easy library for rapid development of command line applications in php.
 
-### Installation 
+Php version> = 7.1
+
+### Installation
+
     composer require --prefer-dist alexp007/cli
+    
+### Fast start
+Remember to include composer autoloader, like this:
 
-## Basic usage
-    use Cli\Basic\{Cli, Formatter};
+    require __DIR__ . "/../vendor/autoload.php"; // path to autoload.php
+    
+then
+
+    use Cli\Basic\Cli;
     
     Cli::initialize([
-        'script_file_name' => 'cli.php'
+        'script_file_name' => 'cli.php' // название файла
     ]);
     
-    Cli::handle('sayHi', function ($name) {
-       $fmt = new Formatter("hi $name!");
-       return $fmt->yellow();
+    Cli::handle('sayHi', function ($name) { // callable 
+        return "hi " . $name; 
     });
     
     Cli::run();
-    
-then you could run command via terminal like:
 
-    php cli.php sayHi Peter
+
+now command can be used via cli:
+
+    php cli.php sayHi pete
     
-### Initialize
+
+the result of the execution will be:
+
+    hi pete
+    
+
+### Creating commands
+
+You can create any number of commands using:
+
+    Cli::handle($commandName, $callable)
+  
+
+* $commandName - (string) command name
+* $callable - (callable) any valid php callback, if you need to pass a static class method then ['Class', 'MethodName']
+
+
+Extended syntax looks like this:
+
+    Cli::handle(string $command, callable $callback, array $flags = array(), array $env = array())
+
+* $flags - (array) allowed flags used with the command, for example ['-r', '--name']
+* $env - (array) environment variables: any data that should be available inside $callback (used to avoid global dependencies)
+
+Extended command declaration example:
+
     use Cli\Basic\Cli;
+    use Cli\Basic\Flags;
+    use Cli\Basic\Environment;
 
-    Cli::initialize(array  $config) 
-
-$config is an array of basic configurations.
-For now time there is only one option you MUST pass: 
-* script_file_name - name of the file
-
-there are also additional options:
-* list (enable_list => 'Y') the list command will be available
-
-### Handling Commands
-    Cli::handle(string  $command, callable  $callback, array  $flags = array(), array $env = array())
+    Cli::handle('sayHi', function ($name, Flags $flags, Environment $env) { // callable
+        if ($flags->getFlag('--send')) {
+            return "mail sent to administrator" . $env->getEnv('email');  
+        }
+        return "hi " . $name;
+    }, ['--send'], ['email' => 'name@mail.ru']);
     
-* $command is the name of command for execution via cli
-* $callback is function that will be invoked
-* $flags array of available flags for this command
-* $env array of environment variables that will be passed to $callback
+If you want to use Flags and Environment, then specifying the data type in the arguments is mandatory.
 
-### Basic rules
-* Flags must be passed before parameters when executing command via cli (example: php cli.php sayHi -f pete)
-* Only "-" and "--" prefix available for flags
-* With flags could be passed they values like -f=value
-* If flag value is not passed it will be set to true
-* You cannot use flags that are not specified in $flags
-* The application tracks the number of parameters. 
-This means that you cannot pass parameters more or less than expected (Optional parameters are not taken)
-* No redeclaring available for one $command
+This library strictly refers to the arguments of commands, which means a command that expects a single argument cannot be called without it.
+However, if the argument is optional, then when creating the function, you should specify the default value for the argument null, for example:
 
-### Run
-
-    Cli::run() 
+    Cli::handle('sayHi', function ($name = null) {
+        return 'hi';
+    });
     
-### Invoking callback
 
-    function(Params $params, Environment $env, Flags $flags) {}
+If you expect a variable number of arguments, then you are prompted to use a Params object:
+
+    use Cli\Basic\Cli;
+    use Cli\Basic\Params;
+    
+    Cli::handle('bit', function(Params $params){
+        $allParams = $params->getArray();
+        return join(',', $allParams);
+    });
+    
  
-* Params, Flags or Environment will be passed into callback in order you specify them in the arguments.
-This arguments are called "special" and they are optional
-* Non-special arguments must be specified before special:
+When using special objects (Params, Flags, Environment) as arguments, their order does not matter:   
+
+    use Cli\Basic\Cli;
+    use Cli\Basic\Flags;
+    use Cli\Basic\Params;
+    use Cli\Basic\Environment;
+    
+    Cli::handle('sayHi', function (Flags $flags, Environment $env, Params $params) { // callable
+       return $params;
+    }, ['--send'], ['email' => 'name@mail.ru']);
+    
+
+Any other arguments should be specified before special ones.   
+
+### Fundamental rules 
+* When invoking a command from a command line, flags must be passed before arguments, for example:
+
+    php cli.php sayHi -f pete
+       
+* You can use flags with the prefixes "-" or "-"
+* Together with flags, you can pass their value through "="
+
+    php cli.php sayHi --mail=pete@mail.ru pete
+
+* If the flag is used without a value, then it will be set to the default value in the Flags object in true
+
+    php cli.php sayHi -f pete
+    
+    -f will be true
+
+* The library will not allow the use of flags that were not specified when creating the command, for example, for the next
+commands, it will not be possible to use the "-r" flag:
 
 
-    function(param1, param2, Flags $flags) {}
-    
-* If you don't know exact number of arguments you could use Params, all arguments will be passed inside Params object:
+    Cli::handle('sayHi', function ($name) {
+            return "hi " . $name; 
+        }, [-f]);
+        
+* Also, the library strictly refers to the number of arguments of a command (see above in the section "Creating Commands")
+* Also in the system there cannot be two command with the same name. The library is closely following this =)        
 
-    
-    function(Params $params) {}
-    
-### Params 
+### Special Objects
+#### Params 
 
     Params::getParam(int $n) - where $n is position
-    Params::getArray(): array
+    Params::getArray(): array // all params
     
-### Flags
+#### Flags
 
     Flags::getFlag(string $flag)
-    Flags::getArray(): array
+    Flags::getArray(): array // all flags
     
-### Environment
+#### Environment
 
     Environment::getEnv(string $key)
-    Environment::getArray(): array
+    Environment::getArray(): array // all environment vars
+    
+
+### Configuration
+When initializing the application, you can set configuration settings, here is an example:    
+          
+    Cli::initialize([
+        'script_file_name'            => 'cli.php',
+        'enable_list'                 => 'on',
+        'enable_exceptions'           => 'on',
+        'enable_errors'               => 'on',
+        'enable_find_command_package' => 'on',
+    ]); 
+    
+* script_file_name - the name of the file in which the library is connected - ** required setting **
+* enable_list - allows the use of listing (built-in command that displays a list of all available commands)
+* enable_exceptions - includes exceptions and explanations from the library (always recommended)
+* enable_errors - enables errors (it is recommended to enable only during debugging)
+* enable_find_command_package - enables a package of built-in search commands    
         
-### Formatter
-
-    use Cli\Basic\Formatter;
-
-Is a class that helps you to format your output.
-You can pass array to its constructor
-
-Below methods are available
-    
-Set color to red:
-
-    Formatter::red() : $this
-    
-Set color to blue:
-
-    Formatter::blue() : $this
-    
-Set color to yellow:
-
-    Formatter::yellow() : $this
-    
-Add line break:
-
-    Formatter::line() : $this
-    
-Print:
-
-    Formatter::printOut() 
-
-### Here are some examples:
-
-    Cli::handle('sayHi', function ($name, \Cli\Basic\Flags $flags) {
-       $fmt = new Formatter("hi $name!");
-       $fmt->yellow()->line()->printOut();
-       
-       $fm2 = new Formatter($flags);
-       
-       return $fm2;
-    }, ['-f']); 
-    
-The output of command "php cli.php sayHi -f=flag pete"
-
-    hi pete!
-    {
-        "-f": flag
-    }
-    
-If you don't know the number of incoming parameters you could use Params object
-
-    Cli::handle('sayHi', function (\Cli\Basic\Params $params, \Cli\Basic\Flags $flags) {
-       $fmt = new Formatter($params);
-       $fmt->red()->line()->printOut();
-       
-       $fm2 = new Formatter($flags);
-       return $fm2;
-    }, ['-f']);
-    
-The output of command "php cli.php sayHi -f=flag pete lena"    
-
-    [
-        "pete",
-        "lena"
-    ]
-    {
-        "-f": "flag"
-    } 
-   
-### Predefined Commands
-If enable_list is set to 'Y' you could list all commands to output by using 'list' command
-
 ## Russian
 Простая и легкая библиотека для скоростной разработки приложений командной строки на php.
 
@@ -203,15 +210,15 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
 
     Cli::handle($commandName, $callable)
  
-* $commandName - string название команды 
-* $callable - любой валидный php колбэк, если нужно передать статический метод класса то ['Class', 'MethodName']
+* $commandName - (string) название команды 
+* $callable - (callable) любой валидный php колбэк, если нужно передать статический метод класса то ['Class', 'MethodName']
 
-Расширенный синтаксис выглядит так
+Расширенный синтаксис выглядит так:
 
     Cli::handle(string $command, callable $callback, array $flags = array(), array $env = array())
     
-* $flags - разрешенные флаги, используемые вместе с командой, например ['-r', '--name']
-* $env - переменные окружения: любые данные, которые должны быть доступны внутри $callback (используются, чтоы избежать глобалных зависимостей)
+* $flags - (array) разрешенные флаги, используемые вместе с командой, например ['-r', '--name']
+* $env - (array) переменные окружения: любые данные, которые должны быть доступны внутри $callback (используются, чтоы избежать глобалных зависимостей)
 
 Расширенное создание команды может выглядеть так:
 
@@ -281,6 +288,7 @@ If enable_list is set to 'Y' you could list all commands to output by using 'lis
      Cli::handle('sayHi', function ($name) {
             return "hi " . $name; 
         }, [-f]);
+        
 
 * Так же библиотека строго относится к кол-ву аргументов команды (см.выше в разделе "Создание команд")
 * Так же в системе не может быть двух команд с одинаковым именем. Библиотека за этим внимательно следит =)
