@@ -164,3 +164,89 @@ The output of command "php cli.php sayHi -f=flag pete lena"
 If enable_list is set to 'Y' you could list all commands to output by using 'list' command
 
 ## Russian
+Простая и легкая библиотека для скоростной разработки приложений командной строки на php 
+
+Версия php >= 7.1
+
+### Установка
+    composer require --prefer-dist alexp007/cli
+    
+### Быстрый старт
+Не забудьте подключить автозагрузчик composer, например так:
+
+    require __DIR__ . "/../vendor/autoload.php"; // путь до автозагрузчика
+    
+далее
+    
+    Cli::initialize([
+        'script_file_name' => 'cli.php' // название файла
+    ]);
+    
+    Cli::handle('sayHi', function ($name) { // callable 
+        return "hi " . $name; 
+    });
+    
+    Cli::run();
+    
+затем можно использовать в командной строке:
+    
+    php cli.php sayHi pete
+    
+результат выполнения будет:
+
+    hi pete
+
+### Создание комманд
+Вы можете создавать любое кол-во комманд используя:
+
+    Cli::handle($commandName, $callable)
+ 
+* $commandName - string название команды 
+* $callable - любой валидный php колбэк, если нужно передать статический метод класса то ['Class', 'MethodName']
+
+Расширенный синтаксис выглядит так
+
+    Cli::handle(string $command, callable $callback, array $flags = array(), array $env = array())
+    
+* $flags - разрешенные флаги, используемые вместе с командой, например ['-r', '--name']
+* $env - переменные окружения: любые данные, которые должны быть доступны внутри $callback (используются, чтоы избежать глобалных зависимостей)
+
+Расширенное создание команды может выглядеть так:
+
+    use Cli\Basic\Flags;
+    use Cli\Basic\Environment;
+
+    Cli::handle('sayHi', function ($name, Flags $flags, Environment $env) { // callable
+        if ($flags->getFlag('--send')) {
+            return "mail sent to administrator" . $env->getEnv('email');  
+        }
+        return "hi " . $name;
+    }, ['--send'], ['email' => 'name@mail.ru']);
+    
+Если вы хотите использовать Flags и Environment, то указание типа данных в агрументах обязательно
+
+Данная библиотека строго относится к аргумента комманд, что значит команду ожидающую один аргумент, нельзя будет вызвать без него.
+Однако, если аргумент не обязательный, то при создании функции следует указать значение по умолчанию для аргумента null, например:
+
+    Cli::handle('sayHi', function ($name = null) {
+        return 'hi';
+    });
+    
+Если вы ожидаете переменное число аргументов, то предлается использовать объект Params:
+
+    use Cli\Basic\Params;
+    
+    Cli::handle('bit', function(Params $params){
+        $allParams = $params->getArray();
+        return join(',', $allParams);
+    });
+    
+При использовании специальных объектов (Params, Flags, Environment) в качестве аргументов, их порядок не имеет значений:
+
+    use Cli\Basic\Flags;
+    use Cli\Basic\Params;
+    use Cli\Basic\Environment;
+    
+    Cli::handle('sayHi', function (Flags $flags, Environment $env, Params $params) { // callable
+       return $params;
+    }, ['--send'], ['email' => 'name@mail.ru']);
