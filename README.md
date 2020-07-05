@@ -164,14 +164,14 @@ When initializing the application, you can set configuration settings, here is a
         'enable_find_command_package' => 'on',
     ]); 
     
-* script_file_name - the name of the file in which the library is connected - ** required setting **
+* script_file_name - the name of the file in which the library is connected - **required**
 * enable_list - allows the use of listing (built-in command that displays a list of all available commands)
 * enable_exceptions - includes exceptions and explanations from the library (always recommended)
 * enable_errors - enables errors (it is recommended to enable only during debugging)
 * enable_find_command_package - enables a package of built-in search commands
 
 ### Built-in Commands
-* list (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
+list (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
 teams registered in the system and brief information about them:  
 
 
@@ -192,7 +192,7 @@ will return:
     
     
 
-* find: file [path to the search directory] [pattern - regular expression]
+find: file [path to the search directory] [pattern - regular expression]
 -> search for files in the system.
 
 You can use the "-r" flag to recursively search subdirectories:
@@ -211,7 +211,7 @@ will find files with php extension:
     +--------------+----------------+
     
     
-* find: inFile [path to the search directory] [pattern - regular expression]
+find: inFile [path to the search directory] [pattern - regular expression]
 -> search for matches in files.
 
 You can use the -r flag to recursively search subdirectories and
@@ -291,7 +291,7 @@ Example table output:
                 
 
 ## Successful development to you!
-Write to me with any questions and suggestions to <alex.p.panteleev@gmail.com>, as well as create issues.
+Write to me with any questions or suggestions to <alex.p.panteleev@gmail.com>, as well as create issues.
 
 Contributors welcome!  
         
@@ -453,7 +453,7 @@ Contributors welcome!
 * enable_find_command_package - подключает пакет встроенных команд поиска
 
 ### Встроенные команды
-* list (если 'enable_list' => 'on') позволяет использовать встроенную команду list, которая выводит список всех
+**list** (если 'enable_list' => 'on') позволяет использовать встроенную команду list, которая выводит список всех
 зарегистрированных в системе команд и краткую информацию о них:
 
 
@@ -472,7 +472,7 @@ Contributors welcome!
     | table       |               |                  |
     +-------------+---------------+------------------+
 
-* find:file [путь к директории поиска] [паттерн - регулярное выражение]
+**find:file** [путь к директории поиска] [паттерн - регулярное выражение]
 -> поиск файлов в системе.
 
 Можно использовать флаг "-r" для рекурсивного поиска в поддиректориях:
@@ -489,7 +489,7 @@ Contributors welcome!
     | cli.php      | ./cli.php      |
     +--------------+----------------+
     
-* find:inFile [путь к директории поиска] [паттерн - регулярное выражение]
+**find:inFile** [путь к директории поиска] [паттерн - регулярное выражение]
 -> поиск совпадений внутри файлов.
 
 Можно использовать флаг "-r" для рекурсивного поиска в поддиректориях и
