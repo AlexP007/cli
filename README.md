@@ -171,7 +171,7 @@ When initializing the application, you can set configuration settings, here is a
 * enable_find_command_package - enables a package of built-in search commands
 
 ### Built-in Commands
-list (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
+**list** (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
 teams registered in the system and brief information about them:  
 
 
@@ -192,7 +192,7 @@ will return:
     
     
 
-find: file [path to the search directory] [pattern - regular expression]
+**find:file** [path to the search directory] [pattern - regular expression]
 -> search for files in the system.
 
 You can use the "-r" flag to recursively search subdirectories:
@@ -211,7 +211,7 @@ will find files with php extension:
     +--------------+----------------+
     
     
-find: inFile [path to the search directory] [pattern - regular expression]
+**find:inFile** [path to the search directory] [pattern - regular expression]
 -> search for matches in files.
 
 You can use the -r flag to recursively search subdirectories and
