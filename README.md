@@ -114,7 +114,7 @@ Any other arguments should be specified before special ones.
 
     php cli.php sayHi -f pete
        
-* You can use flags with the prefixes "-" or "-"
+* You can use flags with the prefixes "-" or "--"
 * Together with flags, you can pass their value through "="
 
     php cli.php sayHi --mail=pete@mail.ru pete
@@ -168,7 +168,132 @@ When initializing the application, you can set configuration settings, here is a
 * enable_list - allows the use of listing (built-in command that displays a list of all available commands)
 * enable_exceptions - includes exceptions and explanations from the library (always recommended)
 * enable_errors - enables errors (it is recommended to enable only during debugging)
-* enable_find_command_package - enables a package of built-in search commands    
+* enable_find_command_package - enables a package of built-in search commands
+
+### Built-in Commands
+* list (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
+teams registered in the system and brief information about them:  
+
+
+    php cli.php list
+    
+will return:
+
+    +-------------+---------------+------------------+
+    | Command     | Params        | Flags            |
+    +-------------+---------------+------------------+
+    | bit         |               |                  |
+    | find:file   | path, pattern | -r               |
+    | find:inFile | path, pattern | -r, --extensions |
+    | list        |               |                  |
+    | sayHi       |               | --send           |
+    | table       |               |                  |
+    +-------------+---------------+------------------+
+    
+    
+
+* find: file [path to the search directory] [pattern - regular expression]
+-> search for files in the system.
+
+You can use the "-r" flag to recursively search subdirectories:
+
+    php cli.php find:file ./ "php"
+    
+
+will find files with php extension:
+
+    
+    +--------------+----------------+
+    | Filename     | Filepath       |
+    +--------------+----------------+
+    | autoload.php | ./autoload.php |
+    | cli.php      | ./cli.php      |
+    +--------------+----------------+
+    
+    
+* find: inFile [path to the search directory] [pattern - regular expression]
+-> search for matches in files.
+
+You can use the -r flag to recursively search subdirectories and
+the “--extensions” flag indicates the exact extensions, separated by commas (only these files will be searched):
+
+    php cli.php find:inFile --extensions=php ./ "include"
+
+will return   
+
+    +--------------------------------+------+----------+-----------+
+    | Match                          | Line | Filename | Filepath  |
+    +--------------------------------+------+----------+-----------+
+    | include_once "src/$class.php"; | 12   | cli.php  | ./cli.php |
+    +--------------------------------+------+----------+-----------+
+    
+To use the find package commands, you need to set 'enable_find_command_package' => 'on' in the configuration.  
+
+### Formatter
+A class that simplifies the work with outputting the result:
+
+    use Cli\Basic\Formatter;
+    
+Output color red:
+
+    Formatter::red() : $this
+
+Output color blue:
+
+    Formatter::blue() : $this
+    
+Output color red:
+
+    Formatter::yellow() : $this
+
+Table view:
+
+    Formatter::asTable(): $this
+
+Line break:
+
+    Formatter::line() : $this
+
+Prints to output stream:
+
+    Formatter::printOut()
+    
+Creating a new Formatter (you can pass an array or a string):
+
+    new Formatter(array or string $data)
+
+Special objects (Params, Flags, Environment) can be passed without additional adaptation:
+
+    use Cli\Basic\Cli;
+    use Cli\Basic\Formatter;
+            
+    Cli::handle('bit', function(Params $params){
+        $fmt = new Formatter($params);
+        return $fmt->blue();
+    });
+    
+Example table output:
+
+    use Cli\Basic\Cli;
+    use Cli\Basic\Formatter;
+    
+    Cli::handle('table', function() {
+        $data = [
+            ['command_1', 'params', 'flags'],
+            ['command_2', '[1,34,56,]', '[-f -r -d]'],
+            ['special_command', '[1,string,56,]', '[-f -r -d]'],
+        ];
+    
+        $fmt = new Formatter($data);
+        return $fmt->asTable()->red();
+    
+    });
+                
+
+## Successful development to you!
+Write to me with any questions and suggestions to <alex.p.panteleev@gmail.com>, as well as create issues.
+
+Contributors welcome!  
         
 ## Russian
 Простая и легкая библиотека для скоростной разработки приложений командной строки на php.
@@ -382,7 +507,7 @@ When initializing the application, you can set configuration settings, here is a
     | include_once "src/$class.php"; | 12   | cli.php  | ./cli.php |
     +--------------------------------+------+----------+-----------+
 
-Для использования команд пакета find нужно в конфигурации установить 'enable_find_command_package' => 'on'
+Для использования команд пакета find нужно в конфигурации установить 'enable_find_command_package' => 'on'.
 
 ### Formatter
 
@@ -447,6 +572,6 @@ When initializing the application, you can set configuration settings, here is a
         });
         
 ## Успешной вам разработки!
-Я всегда открыт для любых вопросов и предложений (пишите, создавайте issue).
+Пишете мне с любыми вопросами и предложениями на <alex.p.panteleev@gmail.com>, а так же создавайте issues.
 
 Всем желающим контрибьютить - добро пожаловать!
