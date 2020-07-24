@@ -4,8 +4,8 @@
 namespace Cli\Basic;
 
 
-use Exception;
 use Error;
+use Exception;
 
 use Cli\Domain\Command;
 use Cli\Domain\CliRequest;
@@ -39,6 +39,11 @@ class Cli extends Singleton
     private $config;
 
     /**
+     * @var Environment
+     */
+    private $environment;
+
+    /**
      * @var HandlerRegistry
      */
     private $handlers;
@@ -47,8 +52,9 @@ class Cli extends Singleton
      * Initializing config and handler registry
      *
      * @param array $config
+     * @param array $environment
      */
-    public final static function initialize(array $config)
+    public final static function initialize(array $config, array $environment = [])
     {
         $instance = self::getInstance();
         try {
@@ -61,7 +67,7 @@ class Cli extends Singleton
             error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
             // initialize strategy
-            $initializeStrategy = new CliInitializeStrategy($instance, $config);
+            $initializeStrategy = new CliInitializeStrategy($instance, $config, $environment);
             $initializeStrategy->run();
 
         } catch (Exception $e) {
@@ -115,6 +121,8 @@ class Cli extends Singleton
     {
         $instance = self::getInstance();
         try {
+            $environment = new Environment($env);
+            $environment->merge($instance->environment);
             $newCommand = new Command($command, $callback, $flags, new Environment($env));
             $instance->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
@@ -132,6 +140,11 @@ class Cli extends Singleton
     public function setConfig(Config $config)
     {
         $this->config = $config;
+    }
+
+    public function setEnvironment(Environment $environment)
+    {
+        $this->environment = $environment;
     }
 
     /**

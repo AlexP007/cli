@@ -54,4 +54,11 @@ class Environment
     {
         return $this->env[$key];
     }
+
+    public function merge(Environment $environment)
+    {
+        $oldVariables = $this->getArray();
+        $newVariables = $environment->getArray();
+        $this->env = array_merge($oldVariables, $newVariables);
+    }
 }
