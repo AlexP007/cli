@@ -19,6 +19,9 @@ Cli::initialize([
     'enable_exceptions'           => 'on',
     'enable_errors'               => 'on',
     'enable_find_command_package' => 'on',
+], [
+    'GLOBAL' => 'very_glob',
+    'email' => 'my@mail.ru',
 ]);
 
 Cli::handle('bit', function(Params $params){

@@ -123,7 +123,7 @@ class Cli extends Singleton
         try {
             $environment = new Environment($env);
             $environment->merge($instance->environment);
-            $newCommand = new Command($command, $callback, $flags, new Environment($env));
+            $newCommand = new Command($command, $callback, $flags, $environment);
             $instance->handlers->$command = $newCommand;
         } catch (ArgumentException $e) {
             $msg = $e->getMessage() . " in Cli::handle command: {{$command}}";

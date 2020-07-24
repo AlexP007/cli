@@ -55,7 +55,7 @@ class CliInitializeStrategy extends Strategy
      */
     private $handlers;
 
-    public function __construct(Cli $cli, array $configuration, array $environment)
+    public function  __construct(Cli $cli, array $configuration, array $environment)
     {
         $this->cli = $cli;
         $this->configuration = $configuration;

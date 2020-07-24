@@ -59,6 +59,6 @@ class Environment
     {
         $oldVariables = $this->getArray();
         $newVariables = $environment->getArray();
-        $this->env = array_merge($oldVariables, $newVariables);
+        $this->env = array_merge($newVariables, $oldVariables);
     }
 }
