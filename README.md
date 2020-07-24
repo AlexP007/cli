@@ -59,7 +59,8 @@ Extended syntax looks like this:
     Cli::handle(string $command, callable $callback, array $flags = array(), array $env = array())
 
 * $flags - (array) allowed flags used with the command, for example ['-r', '--name']
-* $env - (array) environment variables: any data that should be available inside $callback (used to avoid global dependencies)
+* $env - (array) environment variables: any data that should be available inside $callback (used to avoid global dependencies).
+Global variables will be overwritten
 
 Extended command declaration example:
 
@@ -169,6 +170,9 @@ When initializing the application, you can set configuration settings, here is a
 * enable_exceptions - includes exceptions and explanations from the library (always recommended)
 * enable_errors - enables errors (it is recommended to enable only during debugging)
 * enable_find_command_package - enables a package of built-in search commands
+
+You could set global variables by passing them as the second parameter.
+They will be available within special object Environment inside commands
 
 ### Built-in Commands
 **list** (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
@@ -343,7 +347,8 @@ Contributors welcome!
     Cli::handle(string $command, callable $callback, array $flags = array(), array $env = array())
     
 * $flags - (array) разрешенные флаги, используемые вместе с командой, например ['-r', '--name']
-* $env - (array) переменные окружения: любые данные, которые должны быть доступны внутри $callback (используются, чтоы избежать глобалных зависимостей)
+* $env - (array) переменные окружения: любые данные, которые должны быть доступны внутри $callback (используются, чтоы избежать глобалных зависимостей).
+Глобальные переменные окружения будут перезаписаны
 
 Расширенное создание команды может выглядеть так:
 
@@ -451,6 +456,16 @@ Contributors welcome!
 * enable_exceptions - включает исключения и пояснения от билиотеки (рекомендуется включать всегда)
 * enable_errors - включает ошибки (рекомендуется включать только при отладке)    
 * enable_find_command_package - подключает пакет встроенных команд поиска
+
+Так же поддерживает возможность передачи глобальныч переменных вторым параметром, которые будут доступны в 
+специальном объекте Environment внутри команд:
+
+       Cli::initialize([
+               'script_file_name' => 'cli.php',
+            ], [
+               'custom_var' => 'value' // любые типы данных
+            ]
+       );
 
 ### Встроенные команды
 **list** (если 'enable_list' => 'on') позволяет использовать встроенную команду list, которая выводит список всех
