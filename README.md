@@ -174,6 +174,20 @@ When initializing the application, you can set configuration settings, here is a
 You could set global variables by passing them as the second parameter.
 They will be available within special object Environment inside commands
 
+### Aliases
+When passing environment variables, you can use aliases using the @ special character.
+The alias will be interpolated within the string, for example:
+
+    Cli::initialize([
+            'script_file_name' => 'cli.php',
+        ], [
+            'object' => 'ufo',
+            'article_name' => '@object is flying in the sky'
+        ]);
+        
+
+The article_name value will be: "ufo is flying in th sky"
+
 ### Built-in Commands
 **list** (if 'enable_list' => 'on') allows you to use the built-in list command, which lists all
 teams registered in the system and brief information about them:  
@@ -466,6 +480,19 @@ Contributors welcome!
                'custom_var' => 'value' // любые типы данных
             ]
        );
+
+### Псевдонимы
+При передачи переменных окружения вы можете использовать псевдонимы при помощи специального символа @.
+Псевдоним будет интерполирован внутри строки, например:
+
+    Cli::initialize([
+        'script_file_name' => 'cli.php',
+    ], [
+        'object' => 'ufo',
+        'article_name' => '@object is flying in the sky'
+    ]);
+    
+Значение article_name будет: "ufo is flying in th sky"
 
 ### Встроенные команды
 **list** (если 'enable_list' => 'on') позволяет использовать встроенную команду list, которая выводит список всех

@@ -20,12 +20,41 @@ class Environment
     private $env;
 
     /**
+     * @var array
+     */
+    private $aliases = [];
+
+    /**
      * Environment constructor.
      * @param array $env
      */
     public function __construct(array $env)
     {
         $this->env = $env;
+        $this->interpolateAliases();
+    }
+
+    private function interpolateAliases()
+    {
+        $this->setAliases();
+        $aliases = array_keys($this->aliases);
+        $replacements = array_values($this->aliases);
+        foreach ($this->env as &$value) {
+            if (!is_string($value)) {
+                continue;
+            }
+            $value = str_replace($aliases, $replacements, $value);
+        }
+    }
+
+    private function setAliases()
+    {
+        foreach($this->env as $key => $value) {
+            if (!is_string($value)) {
+                continue;
+            }
+            $this->aliases["@$key"] = $value;
+        }
     }
 
     /**
