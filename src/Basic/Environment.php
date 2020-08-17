@@ -43,7 +43,7 @@ class Environment
             if (!is_string($value)) {
                 continue;
             }
-            $value = str_replace($aliases, $replacements, $value);
+            $value = $this->replaceRecursive($value, $aliases, $replacements);
         }
     }
 
@@ -55,6 +55,18 @@ class Environment
             }
             $this->aliases["@$key"] = $value;
         }
+    }
+
+    private function replaceRecursive($value, $search, $replace)
+    {
+        $value = str_replace($search, $replace, $value);
+        foreach ($search as $singleSearch) {
+            if (strstr($value, $singleSearch)) {
+                $value = $this->replaceRecursive($value, $search, $replace);
+                break;
+            }
+        }
+        return $value;
     }
 
     /**
